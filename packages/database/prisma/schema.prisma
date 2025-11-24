@@ -40,6 +40,20 @@ enum VendorDocumentType {
   RECEIVING_REPORT
 }
 
+enum ContractType {
+  LICENSE
+  MANAGED_SERVICE
+  MAINTENANCE
+  OTHER
+}
+
+enum BillingFrequency {
+  MONTHLY
+  QUARTERLY
+  ANNUAL
+  BIENNIAL
+}
+
 enum RoleName {
   ADMIN
   BUDGET_OWNER
@@ -127,6 +141,8 @@ model Transaction {
   costGroupId     String
   purchaseOrder   PurchaseOrder?     @relation(fields: [purchaseOrderId], references: [id])
   purchaseOrderId String?
+  contract        Contract?          @relation(fields: [contractId], references: [id])
+  contractId      String?
   asset           Asset?
   status          TransactionStatus
   createdBy       User               @relation("transactionsCreated", fields: [createdByUserId], references: [id])
@@ -149,6 +165,7 @@ model Asset {
   assetOwner           User                     @relation("assetsOwned", fields: [assetOwnerUserId], references: [id])
   assetOwnerUserId     String
   renewalNotifications RenewalNotificationLog[]
+  purchaseOrderItems   PurchaseOrderLineItem[]
   createdAt            DateTime                 @default(now())
   updatedAt            DateTime                 @updatedAt
 }
@@ -202,6 +219,11 @@ model PurchaseOrderLineItem {
   quantity        Int
   unitPriceLocal  Decimal       @db.Decimal(18, 2)
   totalLocal      Decimal       @db.Decimal(18, 2)
+  asset           Asset?        @relation(fields: [assetId], references: [id])
+  assetId         String?
+  serviceStart    DateTime?
+  serviceEnd      DateTime?
+  isRenewal       Boolean       @default(false)
 }
 
 model ApprovalMatrixRule {
@@ -250,6 +272,28 @@ model VendorDocument {
   uploadedAt             DateTime      @default(now())
   uploadedByVendorUser   User          @relation("vendorDocumentsUploaded", fields: [uploadedByVendorUserId], references: [id])
   uploadedByVendorUserId String
+}
+
+model Contract {
+  id                    String           @id @default(cuid())
+  name                  String
+  type                  ContractType
+  vendor                Vendor           @relation(fields: [vendorId], references: [id])
+  vendorId              String
+  costGroup             CostGroup        @relation(fields: [costGroupId], references: [id])
+  costGroupId           String
+  costType              CostType
+  baseAmountPerPeriod   Decimal          @db.Decimal(18, 2)
+  currencyLocal         String
+  billingFrequency      BillingFrequency
+  startDate             DateTime
+  endDate               DateTime?
+  nextBillingDate       DateTime?
+  active                Boolean          @default(true)
+  purchaseOrderLineItem PurchaseOrderLineItem[]
+  transactions          Transaction[]
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
 }
 
 model AuditLog {
