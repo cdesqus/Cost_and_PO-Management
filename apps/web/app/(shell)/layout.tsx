@@ -40,6 +40,11 @@ const navGroups: NavGroup[] = [
     title: "Asset Management",
     items: [
       { href: "/assets", label: "Asset Registry", icon: "💻" },
+      {
+        href: "/service-commitments",
+        label: "Service Commitments",
+        icon: "📡",
+      },
       { href: "/assets/renewals", label: "Renewal Tracker", icon: "⏰" },
     ],
   },
