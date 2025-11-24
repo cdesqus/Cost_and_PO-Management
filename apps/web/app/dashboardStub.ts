@@ -1,4 +1,4 @@
-import type { DashboardOverview } from "../../packages/types/src";
+import type { DashboardOverview } from "@repo/types";
 
 export const dashboardStub: DashboardOverview = {
   budgetSummary: {
