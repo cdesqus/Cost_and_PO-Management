@@ -1,21 +1,165 @@
+"use client";
+
+import { useMemo, useState } from "react";
 import styles from "../../page.module.css";
 import { formatCurrency } from "@repo/utils/currency";
 
+type CostType = "CAPEX" | "OPEX";
+type TransactionStatus = "BUDGETED" | "COMMITTED" | "PAID";
+
+type TransactionRow = {
+  id: string;
+  date: string;
+  projectVendor: string;
+  costType: CostType;
+  amountUsd: number;
+  status: TransactionStatus;
+};
+
+type FormMode = "create" | "edit";
+
+const initialRows: TransactionRow[] = [
+  {
+    id: "t1",
+    date: "2025-01-12",
+    projectVendor: "CRM Rollout / CloudCRM Inc.",
+    costType: "OPEX",
+    amountUsd: 12000,
+    status: "COMMITTED",
+  },
+  {
+    id: "t2",
+    date: "2025-01-08",
+    projectVendor: "Data Center Refresh / InfraCorp",
+    costType: "CAPEX",
+    amountUsd: 85000,
+    status: "PAID",
+  },
+];
+
 export default function TransactionsPage() {
+  const [rows, setRows] = useState<TransactionRow[]>(initialRows);
+  const [mode, setMode] = useState<FormMode>("create");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState({
+    date: "",
+    projectVendor: "",
+    costType: "OPEX" as CostType,
+    amountUsd: "",
+    status: "BUDGETED" as TransactionStatus,
+  });
+
+  const sortedRows = useMemo(
+    () =>
+      [...rows].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0)),
+    [rows],
+  );
+
+  const openCreate = () => {
+    setMode("create");
+    setEditingId(null);
+    setForm({
+      date: new Date().toISOString().slice(0, 10),
+      projectVendor: "",
+      costType: "OPEX",
+      amountUsd: "",
+      status: "BUDGETED",
+    });
+    setShowForm(true);
+  };
+
+  const openEdit = (row: TransactionRow) => {
+    setMode("edit");
+    setEditingId(row.id);
+    setForm({
+      date: row.date,
+      projectVendor: row.projectVendor,
+      costType: row.costType,
+      amountUsd: String(row.amountUsd),
+      status: row.status,
+    });
+    setShowForm(true);
+  };
+
+  const closeForm = () => {
+    setShowForm(false);
+  };
+
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    const parsedAmount = Number(form.amountUsd);
+    if (!form.projectVendor || !form.date || Number.isNaN(parsedAmount)) {
+      return;
+    }
+
+    if (mode === "create") {
+      const newRow: TransactionRow = {
+        id: `t-${Date.now()}`,
+        date: form.date,
+        projectVendor: form.projectVendor,
+        costType: form.costType,
+        amountUsd: parsedAmount,
+        status: form.status,
+      };
+      setRows((prev) => [newRow, ...prev]);
+    } else if (editingId) {
+      setRows((prev) =>
+        prev.map((row) =>
+          row.id === editingId
+            ? {
+                ...row,
+                date: form.date,
+                projectVendor: form.projectVendor,
+                costType: form.costType,
+                amountUsd: parsedAmount,
+                status: form.status,
+              }
+            : row,
+        ),
+      );
+    }
+
+    setShowForm(false);
+  };
+
+  const handleDelete = (id: string) => {
+    // In a real app this would be a soft delete, with strict RBAC.
+    setRows((prev) => prev.filter((row) => row.id !== id));
+  };
+
   return (
     <>
       <header className={styles.dashboardHeader}>
-        <h1>Transactions</h1>
+        <h1>Expense Transactions</h1>
         <p>
-          Inspect IT cost transactions by project, vendor, and cost group.
-          (Sample data only for this demo.)
+          Create and manage CAPEX/OPEX transactions. This demo uses local data
+          only; in production it will be backed by the API and Prisma.
         </p>
       </header>
+
       <div className={styles.sectionCard}>
         <div className={styles.sectionHeader}>
-          <h3>Recent Transactions</h3>
-          <span className={styles.badge}>Sample data</span>
+          <h3>Transactions</h3>
+          <div style={{ display: "flex", gap: 8 }}>
+            <button
+              type="button"
+              onClick={openCreate}
+              style={{
+                borderRadius: 999,
+                border: "none",
+                padding: "6px 12px",
+                fontSize: 12,
+                cursor: "pointer",
+                background: "#0f172a",
+                color: "#f9fafb",
+              }}
+            >
+              + New Transaction
+            </button>
+          </div>
         </div>
+
         <div style={{ overflowX: "auto" }}>
           <table
             style={{
@@ -39,35 +183,266 @@ export default function TransactionsPage() {
                 <th style={{ textAlign: "left", padding: "8px 4px" }}>
                   Status
                 </th>
+                <th style={{ textAlign: "right", padding: "8px 4px" }}>
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td style={{ padding: "6px 4px" }}>2025-01-12</td>
-                <td style={{ padding: "6px 4px" }}>
-                  CRM Rollout / CloudCRM Inc.
-                </td>
-                <td style={{ padding: "6px 4px" }}>OPEX</td>
-                <td style={{ padding: "6px 4px", textAlign: "right" }}>
-                  {formatCurrency(12000, "USD", "en-US")}
-                </td>
-                <td style={{ padding: "6px 4px" }}>COMMITTED</td>
-              </tr>
-              <tr>
-                <td style={{ padding: "6px 4px" }}>2025-01-08</td>
-                <td style={{ padding: "6px 4px" }}>
-                  Data Center Refresh / InfraCorp
-                </td>
-                <td style={{ padding: "6px 4px" }}>CAPEX</td>
-                <td style={{ padding: "6px 4px", textAlign: "right" }}>
-                  {formatCurrency(85000, "USD", "en-US")}
-                </td>
-                <td style={{ padding: "6px 4px" }}>PAID</td>
-              </tr>
+              {sortedRows.map((row) => (
+                <tr key={row.id}>
+                  <td style={{ padding: "6px 4px" }}>{row.date}</td>
+                  <td style={{ padding: "6px 4px" }}>{row.projectVendor}</td>
+                  <td style={{ padding: "6px 4px" }}>{row.costType}</td>
+                  <td style={{ padding: "6px 4px", textAlign: "right" }}>
+                    {formatCurrency(row.amountUsd, "USD", "en-US")}
+                  </td>
+                  <td style={{ padding: "6px 4px" }}>{row.status}</td>
+                  <td style={{ padding: "6px 4px", textAlign: "right" }}>
+                    <button
+                      type="button"
+                      onClick={() => openEdit(row)}
+                      style={{
+                        borderRadius: 999,
+                        border: "none",
+                        padding: "4px 8px",
+                        fontSize: 11,
+                        cursor: "pointer",
+                        marginRight: 4,
+                        background: "#e5e7eb",
+                      }}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(row.id)}
+                      style={{
+                        borderRadius: 999,
+                        border: "none",
+                        padding: "4px 8px",
+                        fontSize: 11,
+                        cursor: "pointer",
+                        background: "#fee2e2",
+                        color: "#b91c1c",
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+              {sortedRows.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={6}
+                    style={{
+                      padding: "12px 4px",
+                      textAlign: "center",
+                      color: "rgba(15,23,42,0.6)",
+                    }}
+                  >
+                    No transactions yet. Use “New Transaction” to create one.
+                  </td>
+                </tr>
+              ) : null}
             </tbody>
           </table>
         </div>
       </div>
+
+      {showForm ? (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(15,23,42,0.3)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 40,
+          }}
+        >
+          <div
+            style={{
+              width: "100%",
+              maxWidth: 480,
+              borderRadius: 16,
+              background: "#fff",
+              padding: 20,
+              boxShadow: "0 20px 40px rgba(15,23,42,0.15)",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginBottom: 12,
+              }}
+            >
+              <h3 style={{ fontSize: 16 }}>
+                {mode === "create" ? "New Transaction" : "Edit Transaction"}
+              </h3>
+              <button
+                type="button"
+                onClick={closeForm}
+                style={{
+                  border: "none",
+                  background: "transparent",
+                  cursor: "pointer",
+                  fontSize: 18,
+                }}
+                aria-label="Close"
+              >
+                ×
+              </button>
+            </div>
+            <form
+              onSubmit={handleSubmit}
+              style={{ display: "flex", flexDirection: "column", gap: 10 }}
+            >
+              <label style={{ fontSize: 12 }}>
+                Date
+                <input
+                  type="date"
+                  value={form.date}
+                  onChange={(e) =>
+                    setForm((prev) => ({ ...prev, date: e.target.value }))
+                  }
+                  style={{
+                    width: "100%",
+                    marginTop: 4,
+                    padding: "6px 8px",
+                    fontSize: 12,
+                  }}
+                  required
+                />
+              </label>
+              <label style={{ fontSize: 12 }}>
+                Project / Vendor
+                <input
+                  type="text"
+                  value={form.projectVendor}
+                  onChange={(e) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      projectVendor: e.target.value,
+                    }))
+                  }
+                  style={{
+                    width: "100%",
+                    marginTop: 4,
+                    padding: "6px 8px",
+                    fontSize: 12,
+                  }}
+                  required
+                />
+              </label>
+              <label style={{ fontSize: 12 }}>
+                Cost Type
+                <select
+                  value={form.costType}
+                  onChange={(e) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      costType: e.target.value as CostType,
+                    }))
+                  }
+                  style={{
+                    width: "100%",
+                    marginTop: 4,
+                    padding: "6px 8px",
+                    fontSize: 12,
+                  }}
+                >
+                  <option value="CAPEX">CAPEX</option>
+                  <option value="OPEX">OPEX</option>
+                </select>
+              </label>
+              <label style={{ fontSize: 12 }}>
+                Amount (USD)
+                <input
+                  type="number"
+                  min="0"
+                  value={form.amountUsd}
+                  onChange={(e) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      amountUsd: e.target.value,
+                    }))
+                  }
+                  style={{
+                    width: "100%",
+                    marginTop: 4,
+                    padding: "6px 8px",
+                    fontSize: 12,
+                  }}
+                  required
+                />
+              </label>
+              <label style={{ fontSize: 12 }}>
+                Status
+                <select
+                  value={form.status}
+                  onChange={(e) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      status: e.target.value as TransactionStatus,
+                    }))
+                  }
+                  style={{
+                    width: "100%",
+                    marginTop: 4,
+                    padding: "6px 8px",
+                    fontSize: 12,
+                  }}
+                >
+                  <option value="BUDGETED">BUDGETED</option>
+                  <option value="COMMITTED">COMMITTED</option>
+                  <option value="PAID">PAID</option>
+                </select>
+              </label>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  gap: 8,
+                  marginTop: 6,
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={closeForm}
+                  style={{
+                    borderRadius: 999,
+                    border: "none",
+                    padding: "6px 12px",
+                    fontSize: 12,
+                    cursor: "pointer",
+                    background: "#e5e7eb",
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  style={{
+                    borderRadius: 999,
+                    border: "none",
+                    padding: "6px 12px",
+                    fontSize: 12,
+                    cursor: "pointer",
+                    background: "#0f172a",
+                    color: "#f9fafb",
+                  }}
+                >
+                  {mode === "create" ? "Create" : "Save changes"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      ) : null}
     </>
   );
 }
