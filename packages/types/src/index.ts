@@ -31,6 +31,18 @@ export type RoleName =
   | "VIEWER"
   | "VENDOR";
 
+/**
+ * High-level classification of recurring commercial commitments.
+ * This covers software licenses, managed services, maintenance, etc.
+ */
+export type ContractType =
+  | "LICENSE"
+  | "MANAGED_SERVICE"
+  | "MAINTENANCE"
+  | "OTHER";
+
+export type BillingFrequency = "MONTHLY" | "QUARTERLY" | "ANNUAL" | "BIENNIAL";
+
 export interface BudgetSummary {
   year: number;
   totalCapexAllocated: number;
@@ -72,4 +84,37 @@ export interface UpcomingRenewalItem {
 export interface DashboardOverview {
   budgetSummary: BudgetSummary;
   upcomingRenewals: UpcomingRenewalItem[];
+}
+
+/**
+ * Lightweight DTO for a recurring contract / service commitment.
+ */
+export interface ContractSummary {
+  id: string;
+  type: ContractType;
+  name: string;
+  vendorName: string;
+  costGroupName: string;
+  costType: CostType;
+  billingFrequency: BillingFrequency;
+  baseAmountPerPeriodUsd: number;
+  nextBillingDate: string;
+  active: boolean;
+}
+
+/**
+ * Transaction DTO that ties budget hits back to contracts and POs.
+ */
+export interface TransactionDto {
+  id: string;
+  date: string;
+  costType: CostType;
+  costGroupName: string;
+  amountUsd: number;
+  status: TransactionStatus;
+  contractId?: string;
+  contractName?: string;
+  contractType?: ContractType;
+  poId?: string;
+  poNumber?: string;
 }
