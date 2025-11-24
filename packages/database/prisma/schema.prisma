@@ -1,0 +1,265 @@
+generator client {
+  provider = "prisma-client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum CostType {
+  CAPEX
+  OPEX
+}
+
+enum TransactionStatus {
+  BUDGETED
+  COMMITTED
+  PAID
+}
+
+enum AssetStatus {
+  ACTIVE
+  DEPRECATED
+  EXPIRED
+}
+
+enum PurchaseOrderStatus {
+  DRAFT
+  PENDING_APPROVAL
+  APPROVED
+  REJECTED
+  REVISED
+  CANCELLED
+}
+
+enum VendorDocumentType {
+  INVOICE
+  UAT_SIGNOFF
+  BAST
+  RECEIVING_REPORT
+}
+
+enum RoleName {
+  ADMIN
+  BUDGET_OWNER
+  APPROVER
+  VIEWER
+  VENDOR
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum ApprovalAction {
+  APPROVED
+  REJECTED
+  REVISION_REQUESTED
+}
+
+model User {
+  id                      String                     @id @default(cuid())
+  name                    String
+  email                   String                     @unique
+  isVendor                Boolean                    @default(false)
+  status                  UserStatus                 @default(ACTIVE)
+  roles                   UserRole[]
+  transactionsCreated     Transaction[]              @relation("transactionsCreated")
+  assetsOwned             Asset[]                    @relation("assetsOwned")
+  purchaseOrdersCreated   PurchaseOrder[]            @relation("purchaseOrdersCreated")
+  renewalNotificationsSent RenewalNotificationLog[]
+  vendor                  Vendor?
+  vendorDocumentsUploaded VendorDocument[]           @relation("vendorDocumentsUploaded")
+  auditLogs               AuditLog[]
+}
+
+model Role {
+  id   String   @id @default(cuid())
+  name RoleName @unique
+  users UserRole[]
+}
+
+model UserRole {
+  id     String @id @default(cuid())
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+  role   Role   @relation(fields: [roleId], references: [id])
+  roleId String
+
+  @@unique([userId, roleId])
+}
+
+model CostGroup {
+  id             String                 @id @default(cuid())
+  name           String
+  fiscalYear     Int
+  capexCeiling   Decimal?               @db.Decimal(18, 2)
+  opexCeiling    Decimal?               @db.Decimal(18, 2)
+  transactions   Transaction[]
+  purchaseOrders PurchaseOrder[]
+  approvalRules  ApprovalMatrixRule[]
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+
+  @@unique([name, fiscalYear])
+}
+
+model Transaction {
+  id              String             @id @default(cuid())
+  projectName     String
+  vendor          Vendor?            @relation(fields: [vendorId], references: [id])
+  vendorId        String?
+  amountLocal     Decimal            @db.Decimal(18, 2)
+  currencyLocal   String
+  amountUsd       Decimal            @db.Decimal(18, 2)
+  fxRate          Decimal            @db.Decimal(18, 6)
+  date            DateTime
+  costType        CostType
+  costGroup       CostGroup          @relation(fields: [costGroupId], references: [id])
+  costGroupId     String
+  purchaseOrder   PurchaseOrder?     @relation(fields: [purchaseOrderId], references: [id])
+  purchaseOrderId String?
+  asset           Asset?
+  status          TransactionStatus
+  createdBy       User               @relation("transactionsCreated", fields: [createdByUserId], references: [id])
+  createdByUserId String
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+}
+
+model Asset {
+  id                   String                   @id @default(cuid())
+  assetName            String
+  serialOrLicenseKey   String?
+  purchaseDate         DateTime
+  initialCost          Decimal                  @db.Decimal(18, 2)
+  currentStatus        AssetStatus
+  relatedTransaction   Transaction              @relation(fields: [relatedTransactionId], references: [id])
+  relatedTransactionId String                   @unique
+  renewalDate          DateTime?
+  isRecurring          Boolean                  @default(false)
+  assetOwner           User                     @relation("assetsOwned", fields: [assetOwnerUserId], references: [id])
+  assetOwnerUserId     String
+  renewalNotifications RenewalNotificationLog[]
+  createdAt            DateTime                 @default(now())
+  updatedAt            DateTime                 @updatedAt
+}
+
+model RenewalNotificationConfig {
+  id         String  @id @default(cuid())
+  daysBefore Int
+  active     Boolean @default(true)
+
+  @@unique([daysBefore])
+}
+
+model RenewalNotificationLog {
+  id               String    @id @default(cuid())
+  asset            Asset     @relation(fields: [assetId], references: [id])
+  assetId          String
+  notificationDate DateTime  @default(now())
+  daysBefore       Int
+  sentTo           User      @relation(fields: [sentToUserId], references: [id])
+  sentToUserId     String
+}
+
+model PurchaseOrder {
+  id                        String                  @id @default(cuid())
+  poNumber                  String                  @unique
+  vendor                    Vendor                  @relation(fields: [vendorId], references: [id])
+  vendorId                  String
+  costType                  CostType
+  costGroup                 CostGroup               @relation(fields: [costGroupId], references: [id])
+  costGroupId               String
+  totalAmountLocal          Decimal                 @db.Decimal(18, 2)
+  currencyLocal             String
+  totalAmountUsd            Decimal                 @db.Decimal(18, 2)
+  status                    PurchaseOrderStatus
+  createdBy                 User                    @relation("purchaseOrdersCreated", fields: [createdByUserId], references: [id])
+  createdByUserId           String
+  currentApprovalLevelIndex Int?
+  lineItems                 PurchaseOrderLineItem[]
+  approvals                 PurchaseOrderApproval[]
+  vendorDocuments           VendorDocument[]
+  transactions              Transaction[]
+  createdAt                 DateTime                @default(now())
+  updatedAt                 DateTime                @updatedAt
+}
+
+model PurchaseOrderLineItem {
+  id              String        @id @default(cuid())
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id])
+  purchaseOrderId String
+  description     String
+  quantity        Int
+  unitPriceLocal  Decimal       @db.Decimal(18, 2)
+  totalLocal      Decimal       @db.Decimal(18, 2)
+}
+
+model ApprovalMatrixRule {
+  id            String   @id @default(cuid())
+  minAmountUsd  Decimal  @db.Decimal(18, 2)
+  maxAmountUsd  Decimal? @db.Decimal(18, 2)
+  costGroup     CostGroup? @relation(fields: [costGroupId], references: [id])
+  costGroupId   String?
+  sequenceIndex Int
+  approverRole  RoleName
+}
+
+model PurchaseOrderApproval {
+  id                 String            @id @default(cuid())
+  purchaseOrder      PurchaseOrder     @relation(fields: [purchaseOrderId], references: [id])
+  purchaseOrderId    String
+  approvalLevelIndex Int
+  approver           User              @relation(fields: [approverUserId], references: [id])
+  approverUserId     String
+  action             ApprovalAction
+  comment            String
+  actionAt           DateTime          @default(now())
+}
+
+model Vendor {
+  id              String           @id @default(cuid())
+  name            String
+  email           String           @unique
+  loginUser       User?            @relation(fields: [loginUserId], references: [id])
+  loginUserId     String?          @unique
+  purchaseOrders  PurchaseOrder[]
+  transactions    Transaction[]
+  vendorDocuments VendorDocument[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+}
+
+model VendorDocument {
+  id                     String        @id @default(cuid())
+  purchaseOrder          PurchaseOrder @relation(fields: [purchaseOrderId], references: [id])
+  purchaseOrderId        String
+  vendor                 Vendor        @relation(fields: [vendorId], references: [id])
+  vendorId               String
+  type                   VendorDocumentType
+  fileUrl                String
+  uploadedAt             DateTime      @default(now())
+  uploadedByVendorUser   User          @relation("vendorDocumentsUploaded", fields: [uploadedByVendorUserId], references: [id])
+  uploadedByVendorUserId String
+}
+
+model AuditLog {
+  id               String      @id @default(cuid())
+  entityType       String
+  entityId         String
+  action           AuditAction
+  performedBy      User        @relation(fields: [performedByUserId], references: [id])
+  performedByUserId String
+  timestamp        DateTime    @default(now())
+  oldValue         Json?
+  newValue         Json?
+}
