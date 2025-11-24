@@ -1,11 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { DashboardOverview } from "@repo/types";
 import {
   calculateUtilizationPercent,
   formatCurrency,
 } from "@repo/utils/currency";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Legend,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import styles from "../../page.module.css";
 
 function getMonthLabel(monthNumber: number): string {
@@ -57,6 +67,18 @@ export default function DashboardPage() {
 
     void fetchDashboard();
   }, []);
+
+  const chartData = useMemo(() => {
+    if (!data) {
+      return [];
+    }
+
+    return data.budgetSummary.monthlyBurn.map((item) => ({
+      name: getMonthLabel(item.month),
+      CAPEX: item.capexUsed,
+      OPEX: item.opexUsed,
+    }));
+  }, [data]);
 
   if (loading) {
     return (
@@ -151,34 +173,24 @@ export default function DashboardPage() {
         <div className={styles.sectionCard}>
           <div className={styles.sectionHeader}>
             <h3>Monthly Burn (USD)</h3>
-            <span className={styles.badge}>Demo data</span>
+            <span className={styles.badge}>Demo chart</span>
           </div>
-          <div className={styles.burnList}>
-            {budgetSummary.monthlyBurn.map((item) => (
-              <div key={item.month} className={styles.burnRow}>
-                <span className={styles.monthLabel}>
-                  {getMonthLabel(item.month)}
-                </span>
-                <div className={styles.burnBars}>
-                  <div
-                    className={styles.capexBar}
-                    style={{ width: `${item.capexUsed / 1_000}%` }}
-                  />
-                  <div
-                    className={styles.opexBar}
-                    style={{ width: `${item.opexUsed / 1_000}%` }}
-                  />
-                </div>
-                <div className={styles.burnValues}>
-                  <span>
-                    CAPEX {formatCurrency(item.capexUsed, "USD", "en-US")}
-                  </span>
-                  <span>
-                    OPEX {formatCurrency(item.opexUsed, "USD", "en-US")}
-                  </span>
-                </div>
-              </div>
-            ))}
+          <div style={{ width: "100%", height: 240 }}>
+            <ResponsiveContainer>
+              <BarChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip
+                  formatter={(value: number) =>
+                    formatCurrency(value, "USD", "en-US")
+                  }
+                />
+                <Legend />
+                <Bar dataKey="CAPEX" fill="#3b82f6" radius={[8, 8, 0, 0]} />
+                <Bar dataKey="OPEX" fill="#22c55e" radius={[8, 8, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </div>
 
