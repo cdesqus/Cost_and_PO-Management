@@ -1,9 +1,20 @@
 .page {
+  /* NEW DESIGN TOKENS */
   --gray-rgb: 15, 23, 42;
   --gray-alpha-200: rgba(var(--gray-rgb), 0.08);
   --gray-alpha-100: rgba(var(--gray-rgb), 0.04);
 
-  --button-primary-hover: #0f172a;
+  --primary: #335cff;
+  --primary-accent: #6b74ff;
+  --primary-soft: #eef2ff;
+
+  --bg-soft: #f7f9fc;
+  --surface: rgba(255, 255, 255, 0.9);
+
+  --danger: #e54848;
+  --danger-soft: #ffe5e5;
+
+  --button-primary-hover: #1f2937;
   --button-secondary-hover: #e5e7eb;
 
   display: grid;
@@ -12,10 +23,15 @@
   padding: 16px 24px 20px;
   gap: 16px;
   font-synthesis: none;
-  background: radial-gradient(circle at top left, #e0f2fe 0, transparent 50%),
-    radial-gradient(circle at top right, #f5f3ff 0, transparent 45%),
-    radial-gradient(circle at bottom, #eff6ff 0, transparent 55%);
+
+  /* softer SaaS-style background */
+  background:
+    radial-gradient(circle at top left, #e0edff 0, transparent 55%),
+    radial-gradient(circle at top right, #f4f3ff 0, transparent 50%),
+    linear-gradient(180deg, #f7f9fc 0%, #f9fafb 60%, #f7f9fc 100%);
 }
+
+/* ───── HEADER ───── */
 
 .appHeader {
   max-width: 1280px;
@@ -25,11 +41,12 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 10px 12px;
+  padding: 10px 16px;
   border-radius: 999px;
-  border: 1px solid var(--gray-alpha-200);
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(18px);
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(24px);
+  box-shadow: 0 14px 40px rgba(15, 23, 42, 0.06);
 }
 
 .headerLeft {
@@ -51,7 +68,7 @@
 .headerCenter {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   font-size: 12px;
 }
 
@@ -61,14 +78,15 @@
   gap: 6px;
   padding: 4px 10px;
   border-radius: 999px;
-  background: var(--gray-alpha-100);
+  background: var(--primary-soft);
+  color: rgba(var(--gray-rgb), 0.8);
 }
 
 .headerBadge {
   min-width: 18px;
   height: 18px;
   border-radius: 999px;
-  background: #ef4444;
+  background: var(--danger);
   color: #f9fafb;
   font-size: 11px;
   display: flex;
@@ -109,13 +127,23 @@
 @media (prefers-color-scheme: dark) {
   .page {
     --gray-rgb: 255, 255, 255;
-    --gray-alpha-200: rgba(var(--gray-rgb), 0.145);
+    --gray-alpha-200: rgba(var(--gray-rgb), 0.16);
     --gray-alpha-100: rgba(var(--gray-rgb), 0.06);
 
-    --button-primary-hover: #ccc;
-    --button-secondary-hover: #1a1a1a;
+    --bg-soft: #020617;
+    --surface: rgba(15, 23, 42, 0.95);
+
+    --button-primary-hover: #e5e5e5;
+    --button-secondary-hover: #1f2937;
+  }
+
+  .appHeader {
+    background: rgba(15, 23, 42, 0.96);
+    border-color: rgba(148, 163, 184, 0.4);
   }
 }
+
+/* ───── SHELL / SIDEBAR ───── */
 
 .appShell {
   display: grid;
@@ -130,14 +158,15 @@
 
 .sidebar {
   grid-row: 1 / span 2;
-  border-radius: 18px;
-  border: 1px solid var(--gray-alpha-200);
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(18px);
+  border-radius: 24px;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  background: var(--surface);
+  backdrop-filter: blur(22px);
   padding: 18px 16px;
   display: flex;
   flex-direction: column;
   gap: 24px;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
   transition: width 0.18s ease, padding 0.18s ease;
 }
 
@@ -163,7 +192,7 @@
   width: 32px;
   height: 32px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #0f172a, #3b82f6);
+  background: linear-gradient(135deg, var(--primary), var(--primary-accent));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -188,14 +217,6 @@
   color: rgba(var(--gray-rgb), 0.65);
 }
 
-.navSectionLabel {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: rgba(var(--gray-rgb), 0.6);
-  margin-bottom: 6px;
-}
-
 .navGroup {
   margin-top: 18px;
 }
@@ -205,7 +226,7 @@
   text-transform: uppercase;
   letter-spacing: 0.14em;
   color: rgba(var(--gray-rgb), 0.6);
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .navList {
@@ -229,7 +250,11 @@
   gap: 8px;
   color: rgba(var(--gray-rgb), 0.7);
   cursor: pointer;
-  transition: background 0.16s ease, color 0.16s ease, transform 0.12s ease;
+  transition:
+    background 0.16s ease,
+    color 0.16s ease,
+    box-shadow 0.12s ease,
+    transform 0.12s ease;
 }
 
 .navItemIcon {
@@ -245,24 +270,26 @@
   font-size: 11px;
   padding: 2px 8px;
   border-radius: 999px;
-  background: rgba(59, 130, 246, 0.06);
+  background: rgba(51, 92, 255, 0.06);
   color: #1d4ed8;
 }
 
+/* ACTIVE STATE – gradient + glow */
 .navItemActive {
-  background: #0f172a;
+  background: linear-gradient(135deg, var(--primary), var(--primary-accent));
   color: #f9fafb;
+  box-shadow: 0 10px 26px rgba(51, 92, 255, 0.4);
   transform: translateX(2px);
 }
 
 .navItemActive .navItemPill {
-  background: rgba(15, 23, 42, 0.9);
-  color: #bfdbfe;
+  background: rgba(15, 23, 42, 0.24);
+  color: #e0f2fe;
 }
 
 .navFooter {
   margin-top: auto;
-  padding-top: 8px;
+  padding-top: 10px;
   border-top: 1px dashed rgba(var(--gray-rgb), 0.12);
   display: flex;
   flex-direction: column;
@@ -271,157 +298,12 @@
   color: rgba(var(--gray-rgb), 0.6);
 }
 
+/* ───── MAIN CONTENT ───── */
+
 .main {
   display: flex;
   flex-direction: column;
   gap: 24px;
-}
-
-.main ol {
-  font-family: var(--font-geist-mono);
-  padding-left: 0;
-  margin: 0;
-  font-size: 14px;
-  line-height: 24px;
-  letter-spacing: -0.01em;
-  list-style-position: inside;
-}
-
-.main li:not(:last-of-type) {
-  margin-bottom: 8px;
-}
-
-.main code {
-  font-family: inherit;
-  background: var(--gray-alpha-100);
-  padding: 2px 4px;
-  border-radius: 4px;
-  font-weight: 600;
-}
-
-.ctas {
-  display: flex;
-  gap: 16px;
-}
-
-.ctas a {
-  appearance: none;
-  border-radius: 128px;
-  height: 48px;
-  padding: 0 20px;
-  border: none;
-  font-family: var(--font-geist-sans);
-  border: 1px solid transparent;
-  transition: background 0.2s, color 0.2s, border-color 0.2s;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  line-height: 20px;
-  font-weight: 500;
-}
-
-a.primary {
-  background: var(--foreground);
-  color: var(--background);
-  gap: 8px;
-}
-
-a.secondary {
-  border-color: var(--gray-alpha-200);
-  min-width: 180px;
-}
-
-button.secondary {
-  appearance: none;
-  border-radius: 128px;
-  height: 48px;
-  padding: 0 20px;
-  border: none;
-  font-family: var(--font-geist-sans);
-  border: 1px solid transparent;
-  transition: background 0.2s, color 0.2s, border-color 0.2s;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  line-height: 20px;
-  font-weight: 500;
-  background: transparent;
-  border-color: var(--gray-alpha-200);
-  min-width: 180px;
-}
-
-.footer {
-  font-family: var(--font-geist-sans);
-  grid-row-start: 3;
-  display: flex;
-  gap: 24px;
-}
-
-.footer a {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.footer img {
-  flex-shrink: 0;
-}
-
-/* Enable hover only on non-touch devices */
-@media (hover: hover) and (pointer: fine) {
-  a.primary:hover {
-    background: var(--button-primary-hover);
-    border-color: transparent;
-  }
-
-  a.secondary:hover {
-    background: var(--button-secondary-hover);
-    border-color: transparent;
-  }
-
-  .footer a:hover {
-    text-decoration: underline;
-    text-underline-offset: 4px;
-  }
-}
-
-@media (max-width: 600px) {
-  .page {
-    padding: 32px;
-    padding-bottom: 80px;
-  }
-
-  .main {
-    align-items: center;
-  }
-
-  .main ol {
-    text-align: center;
-  }
-
-  .ctas {
-    flex-direction: column;
-  }
-
-  .ctas a {
-    font-size: 14px;
-    height: 40px;
-    padding: 0 16px;
-  }
-
-  a.secondary {
-    min-width: auto;
-  }
-
-  .footer {
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-  }
 }
 
 .dashboardHeader {
@@ -440,8 +322,10 @@ button.secondary {
   max-width: 640px;
   font-size: 14px;
   line-height: 1.6;
-  color: rgba(var(--gray-rgb), 0.75);
+  color: rgba(var(--gray-rgb), 0.72);
 }
+
+/* KPI CARDS */
 
 .kpiGrid {
   display: grid;
@@ -450,17 +334,18 @@ button.secondary {
 }
 
 .kpiCard {
-  border-radius: 16px;
-  border: 1px solid var(--gray-alpha-200);
+  border-radius: 20px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
   padding: 16px 20px;
-  background: rgba(var(--gray-rgb), 0.01);
+  background: linear-gradient(135deg, #ffffff, #f7f9ff);
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.02);
 }
 
 .kpiCard h2 {
-  font-size: 14px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
   color: rgba(var(--gray-rgb), 0.7);
@@ -473,7 +358,6 @@ button.secondary {
 
 .kpiSubtext {
   font-size: 12px;
-  font-weight: 400;
   margin-left: 4px;
   color: rgba(var(--gray-rgb), 0.7);
 }
@@ -483,6 +367,8 @@ button.secondary {
   color: rgba(var(--gray-rgb), 0.7);
 }
 
+/* SECTIONS */
+
 .sectionGrid {
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
@@ -490,12 +376,14 @@ button.secondary {
 }
 
 .sectionCard {
-  border-radius: 16px;
-  border: 1px solid var(--gray-alpha-200);
-  padding: 16px 20px;
+  border-radius: 20px;
+  border: 1px solid rgba(148, 163, 184, 0.23);
+  padding: 18px 20px;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.04);
 }
 
 .sectionHeader {
@@ -508,13 +396,16 @@ button.secondary {
   font-size: 16px;
 }
 
+/* Generic badge */
 .badge {
   font-size: 11px;
-  padding: 2px 8px;
+  padding: 4px 10px;
   border-radius: 999px;
-  background: var(--gray-alpha-100);
+  background: var(--primary-soft);
+  color: #1d4ed8;
 }
 
+/* Burn / bar, same behaviour as before */
 .burnList {
   display: flex;
   flex-direction: column;
@@ -560,6 +451,8 @@ button.secondary {
   gap: 2px;
 }
 
+/* Renewal list */
+
 .renewalList {
   list-style: none;
   display: flex;
@@ -589,9 +482,139 @@ button.secondary {
   font-weight: 500;
 }
 
+/* Secondary / ghost button – cocok buat Sample layout dll */
 .secondaryButton {
   margin-top: 8px;
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(248, 250, 252, 0.9);
+  color: rgba(var(--gray-rgb), 0.8);
+  cursor: pointer;
 }
+
+/* DELETE / DANGER BUTTON STYLE (kalau dipakai di komponen lain) */
+.button-danger {
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: none;
+  background: var(--danger-soft);
+  color: var(--danger);
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+/* CTAs & Footer tetap, cuma pakai warna baru */
+
+.ctas {
+  display: flex;
+  gap: 16px;
+}
+
+.ctas a {
+  appearance: none;
+  border-radius: 128px;
+  height: 48px;
+  padding: 0 20px;
+  border: none;
+  font-family: var(--font-geist-sans);
+  border: 1px solid transparent;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 500;
+}
+
+a.primary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-accent));
+  color: #f9fafb;
+  gap: 8px;
+  box-shadow: 0 14px 30px rgba(51, 92, 255, 0.4);
+}
+
+a.secondary {
+  border-color: var(--gray-alpha-200);
+  min-width: 180px;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+button.secondary {
+  appearance: none;
+  border-radius: 128px;
+  height: 48px;
+  padding: 0 20px;
+  border: none;
+  font-family: var(--font-geist-sans);
+  border: 1px solid var(--gray-alpha-200);
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 500;
+}
+
+.footer {
+  font-family: var(--font-geist-sans);
+  grid-row-start: 3;
+  display: flex;
+  gap: 24px;
+}
+
+.footer a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer img {
+  flex-shrink: 0;
+}
+
+/* hover only on non-touch devices */
+@media (hover: hover) and (pointer: fine) {
+  a.primary:hover {
+    background: var(--button-primary-hover);
+    border-color: transparent;
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.35);
+  }
+
+  a.secondary:hover,
+  button.secondary:hover {
+    background: var(--button-secondary-hover);
+    border-color: transparent;
+  }
+
+  .secondaryButton:hover {
+    background: #e5edff;
+  }
+
+  .button-danger:hover {
+    background: #ffd1d1;
+  }
+
+  .footer a:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .navItemButton:hover:not(.navItemActive) {
+    background: rgba(148, 163, 184, 0.16);
+    color: rgba(var(--gray-rgb), 0.9);
+  }
+}
+
+/* ───── RESPONSIVE ───── */
 
 @media (max-width: 1100px) {
   .appShell {
@@ -616,6 +639,7 @@ button.secondary {
     align-items: center;
     justify-content: space-between;
     padding: 12px 14px;
+    border-radius: 18px;
   }
 
   .navList {
@@ -640,15 +664,20 @@ button.secondary {
 
 @media (max-width: 600px) {
   .page {
-    padding: 32px;
-    padding-bottom: 80px;
+    padding: 24px;
+    padding-bottom: 72px;
   }
 
   .main {
     align-items: center;
   }
 
-  .main ol {
+  .dashboardHeader h1 {
+    font-size: 24px;
+    text-align: center;
+  }
+
+  .dashboardHeader p {
     text-align: center;
   }
 
@@ -656,7 +685,8 @@ button.secondary {
     flex-direction: column;
   }
 
-  .ctas a {
+  .ctas a,
+  button.secondary {
     font-size: 14px;
     height: 40px;
     padding: 0 16px;
@@ -670,15 +700,6 @@ button.secondary {
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-  }
-
-  .dashboardHeader h1 {
-    font-size: 24px;
-    text-align: center;
-  }
-
-  .dashboardHeader p {
-    text-align: center;
   }
 
   .sectionGrid {

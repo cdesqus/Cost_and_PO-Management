@@ -133,121 +133,280 @@ export default function TransactionsPage() {
       <header className={styles.dashboardHeader}>
         <h1>Expense Transactions</h1>
         <p>
-          Create and manage CAPEX/OPEX transactions. This demo uses local data
-          only; in production it will be backed by the API and Prisma.
+          Create and manage CAPEX/OPEX spend across projects and vendors. This
+          demo uses local data only; production will connect to the IT Spend Hub
+          API.
         </p>
       </header>
 
       <div className={styles.sectionCard}>
         <div className={styles.sectionHeader}>
-          <h3>Transactions</h3>
-          <div style={{ display: "flex", gap: 8 }}>
-            <button
-              type="button"
-              onClick={openCreate}
+          <div>
+            <h3>Expense Transactions</h3>
+            <p
               style={{
-                borderRadius: 999,
-                border: "none",
-                padding: "6px 12px",
+                marginTop: 4,
                 fontSize: 12,
-                cursor: "pointer",
-                background: "#0f172a",
-                color: "#f9fafb",
+                color: "rgba(15, 23, 42, 0.6)",
               }}
             >
-              + New Transaction
-            </button>
+              Track CAPEX and OPEX lines with real-time status for approvals and
+              payments.
+            </p>
           </div>
-        </div>
-
-        <div style={{ overflowX: "auto" }}>
-          <table
+          <button
+            type="button"
+            onClick={openCreate}
             style={{
-              width: "100%",
-              borderCollapse: "collapse",
+              borderRadius: 999,
+              border: "none",
+              padding: "8px 18px",
               fontSize: 12,
+              cursor: "pointer",
+              background:
+                "linear-gradient(135deg, #020617, #1e293b)", // dark navy gradient
+              color: "#f9fafb",
+              boxShadow: "0 14px 30px rgba(15, 23, 42, 0.4)",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              whiteSpace: "nowrap",
             }}
           >
-            <thead>
-              <tr>
-                <th style={{ textAlign: "left", padding: "8px 4px" }}>Date</th>
-                <th style={{ textAlign: "left", padding: "8px 4px" }}>
-                  Project / Vendor
-                </th>
-                <th style={{ textAlign: "left", padding: "8px 4px" }}>
-                  Cost Type
-                </th>
-                <th style={{ textAlign: "right", padding: "8px 4px" }}>
-                  Amount (USD)
-                </th>
-                <th style={{ textAlign: "left", padding: "8px 4px" }}>
-                  Status
-                </th>
-                <th style={{ textAlign: "right", padding: "8px 4px" }}>
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {sortedRows.map((row) => (
-                <tr key={row.id}>
-                  <td style={{ padding: "6px 4px" }}>{row.date}</td>
-                  <td style={{ padding: "6px 4px" }}>{row.projectVendor}</td>
-                  <td style={{ padding: "6px 4px" }}>{row.costType}</td>
-                  <td style={{ padding: "6px 4px", textAlign: "right" }}>
-                    {formatCurrency(row.amountUsd, "USD", "en-US")}
-                  </td>
-                  <td style={{ padding: "6px 4px" }}>{row.status}</td>
-                  <td style={{ padding: "6px 4px", textAlign: "right" }}>
-                    <button
-                      type="button"
-                      onClick={() => openEdit(row)}
-                      style={{
-                        borderRadius: 999,
-                        border: "none",
-                        padding: "4px 8px",
-                        fontSize: 11,
-                        cursor: "pointer",
-                        marginRight: 4,
-                        background: "#e5e7eb",
-                      }}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleDelete(row.id)}
-                      style={{
-                        borderRadius: 999,
-                        border: "none",
-                        padding: "4px 8px",
-                        fontSize: 11,
-                        cursor: "pointer",
-                        background: "#fee2e2",
-                        color: "#b91c1c",
-                      }}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-              {sortedRows.length === 0 ? (
+            <span>+ New Transaction</span>
+          </button>
+        </div>
+
+        <div
+          style={{
+            marginTop: 8,
+            borderRadius: 16,
+            border: "1px solid rgba(148,163,184,0.25)",
+            background:
+              "linear-gradient(135deg, rgba(255,255,255,0.96), rgba(248,250,252,0.9))",
+            boxShadow: "0 18px 40px rgba(15,23,42,0.04)",
+            overflow: "hidden",
+          }}
+        >
+          <div style={{ overflowX: "auto" }}>
+            <table
+              style={{
+                width: "100%",
+                borderCollapse: "separate",
+                borderSpacing: 0,
+                fontSize: 12,
+              }}
+            >
+              <thead
+                style={{
+                  background:
+                    "linear-gradient(90deg, rgba(239,246,255,0.95), rgba(239,246,255,0.7))",
+                }}
+              >
                 <tr>
-                  <td
-                    colSpan={6}
+                  <th
                     style={{
-                      padding: "12px 4px",
-                      textAlign: "center",
+                      textAlign: "left",
+                      padding: "10px 14px",
+                      fontWeight: 500,
+                      fontSize: 11,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.14em",
                       color: "rgba(15,23,42,0.6)",
                     }}
                   >
-                    No transactions yet. Use “New Transaction” to create one.
-                  </td>
+                    Date
+                  </th>
+                  <th
+                    style={{
+                      textAlign: "left",
+                      padding: "10px 14px",
+                      fontWeight: 500,
+                      fontSize: 11,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.14em",
+                      color: "rgba(15,23,42,0.6)",
+                    }}
+                  >
+                    Project / Vendor
+                  </th>
+                  <th
+                    style={{
+                      textAlign: "left",
+                      padding: "10px 14px",
+                      fontWeight: 500,
+                      fontSize: 11,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.14em",
+                      color: "rgba(15,23,42,0.6)",
+                    }}
+                  >
+                    Cost Type
+                  </th>
+                  <th
+                    style={{
+                      textAlign: "right",
+                      padding: "10px 14px",
+                      fontWeight: 500,
+                      fontSize: 11,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.14em",
+                      color: "rgba(15,23,42,0.6)",
+                    }}
+                  >
+                    Amount (USD)
+                  </th>
+                  <th
+                    style={{
+                      textAlign: "left",
+                      padding: "10px 14px",
+                      fontWeight: 500,
+                      fontSize: 11,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.14em",
+                      color: "rgba(15,23,42,0.6)",
+                    }}
+                  >
+                    Status
+                  </th>
+                  <th
+                    style={{
+                      textAlign: "right",
+                      padding: "10px 14px",
+                      fontWeight: 500,
+                      fontSize: 11,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.14em",
+                      color: "rgba(15,23,42,0.6)",
+                    }}
+                  >
+                    Actions
+                  </th>
                 </tr>
-              ) : null}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {sortedRows.map((row, index) => (
+                  <tr
+                    key={row.id}
+                    style={{
+                      background:
+                        index % 2 === 0
+                          ? "rgba(248,250,252,0.85)"
+                          : "rgba(255,255,255,0.9)",
+                    }}
+                  >
+                    <td style={{ padding: "10px 14px", whiteSpace: "nowrap" }}>
+                      {row.date}
+                    </td>
+                    <td style={{ padding: "10px 14px" }}>{row.projectVendor}</td>
+                    <td style={{ padding: "10px 14px" }}>
+                      <span
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          padding: "4px 10px",
+                          borderRadius: 999,
+                          fontSize: 11,
+                          fontWeight: 500,
+                          background:
+                            row.costType === "CAPEX"
+                              ? "rgba(59,130,246,0.08)"
+                              : "rgba(34,197,94,0.08)",
+                          color:
+                            row.costType === "CAPEX"
+                              ? "#1d4ed8"
+                              : "#15803d",
+                        }}
+                      >
+                        {row.costType}
+                      </span>
+                    </td>
+                    <td
+                      style={{
+                        padding: "10px 14px",
+                        textAlign: "right",
+                        fontVariantNumeric: "tabular-nums",
+                        fontWeight: 500,
+                      }}
+                    >
+                      {formatCurrency(row.amountUsd, "USD", "en-US")}
+                    </td>
+                    <td style={{ padding: "10px 14px" }}>
+                      <span
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          padding: "4px 10px",
+                          borderRadius: 999,
+                          fontSize: 11,
+                          fontWeight: 500,
+                          background:
+                            row.status === "PAID"
+                              ? "rgba(22,163,74,0.08)"
+                              : "rgba(234,179,8,0.08)",
+                          color:
+                            row.status === "PAID"
+                              ? "#15803d"
+                              : "rgba(161,98,7,1)",
+                        }}
+                      >
+                        {row.status}
+                      </span>
+                    </td>
+                    <td
+                      style={{
+                        padding: "10px 14px",
+                        textAlign: "right",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => openEdit(row)}
+                        className={styles.secondaryButton}
+                        style={{
+                          borderRadius: 999,
+                          padding: "4px 10px",
+                          fontSize: 11,
+                          boxShadow: "0 8px 18px rgba(15,23,42,0.06)",
+                          marginRight: 6,
+                        }}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(row.id)}
+                        className={styles["button-danger"]}
+                        style={{
+                          borderRadius: 999,
+                          padding: "4px 10px",
+                          fontSize: 11,
+                          boxShadow: "0 8px 18px rgba(220,38,38,0.15)",
+                        }}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                {sortedRows.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={6}
+                      style={{
+                        padding: "16px 14px",
+                        textAlign: "center",
+                        color: "rgba(15,23,42,0.6)",
+                      }}
+                    >
+                      No transactions yet. Use “New Transaction” to create one.
+                    </td>
+                  </tr>
+                ) : null}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
@@ -267,10 +426,11 @@ export default function TransactionsPage() {
             style={{
               width: "100%",
               maxWidth: 480,
-              borderRadius: 16,
-              background: "#fff",
+              borderRadius: 20,
+              background: "rgba(255,255,255,0.98)",
               padding: 20,
-              boxShadow: "0 20px 40px rgba(15,23,42,0.15)",
+              boxShadow: "0 24px 60px rgba(15,23,42,0.25)",
+              backdropFilter: "blur(24px)",
             }}
           >
             <div
@@ -278,11 +438,22 @@ export default function TransactionsPage() {
                 display: "flex",
                 justifyContent: "space-between",
                 marginBottom: 12,
+                alignItems: "center",
               }}
             >
-              <h3 style={{ fontSize: 16 }}>
-                {mode === "create" ? "New Transaction" : "Edit Transaction"}
-              </h3>
+              <div>
+                <h3 style={{ fontSize: 16, marginBottom: 2 }}>
+                  {mode === "create" ? "New Transaction" : "Edit Transaction"}
+                </h3>
+                <p
+                  style={{
+                    fontSize: 12,
+                    color: "rgba(15,23,42,0.6)",
+                  }}
+                >
+                  Capture line-level CAPEX / OPEX with status for approvals.
+                </p>
+              </div>
               <button
                 type="button"
                 onClick={closeForm}
@@ -291,6 +462,8 @@ export default function TransactionsPage() {
                   background: "transparent",
                   cursor: "pointer",
                   fontSize: 18,
+                  lineHeight: 1,
+                  padding: 4,
                 }}
                 aria-label="Close"
               >
@@ -299,9 +472,14 @@ export default function TransactionsPage() {
             </div>
             <form
               onSubmit={handleSubmit}
-              style={{ display: "flex", flexDirection: "column", gap: 10 }}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 10,
+                marginTop: 4,
+              }}
             >
-              <label style={{ fontSize: 12 }}>
+              <label style={{ fontSize: 12, display: "flex", flexDirection: "column", gap: 4 }}>
                 Date
                 <input
                   type="date"
@@ -311,14 +489,16 @@ export default function TransactionsPage() {
                   }
                   style={{
                     width: "100%",
-                    marginTop: 4,
-                    padding: "6px 8px",
+                    padding: "8px 10px",
                     fontSize: 12,
+                    borderRadius: 999,
+                    border: "1px solid rgba(148,163,184,0.35)",
+                    background: "rgba(248,250,252,0.9)",
                   }}
                   required
                 />
               </label>
-              <label style={{ fontSize: 12 }}>
+              <label style={{ fontSize: 12, display: "flex", flexDirection: "column", gap: 4 }}>
                 Project / Vendor
                 <input
                   type="text"
@@ -331,14 +511,16 @@ export default function TransactionsPage() {
                   }
                   style={{
                     width: "100%",
-                    marginTop: 4,
-                    padding: "6px 8px",
+                    padding: "8px 10px",
                     fontSize: 12,
+                    borderRadius: 999,
+                    border: "1px solid rgba(148,163,184,0.35)",
+                    background: "rgba(248,250,252,0.9)",
                   }}
                   required
                 />
               </label>
-              <label style={{ fontSize: 12 }}>
+              <label style={{ fontSize: 12, display: "flex", flexDirection: "column", gap: 4 }}>
                 Cost Type
                 <select
                   value={form.costType}
@@ -350,16 +532,18 @@ export default function TransactionsPage() {
                   }
                   style={{
                     width: "100%",
-                    marginTop: 4,
-                    padding: "6px 8px",
+                    padding: "8px 10px",
                     fontSize: 12,
+                    borderRadius: 999,
+                    border: "1px solid rgba(148,163,184,0.35)",
+                    background: "rgba(248,250,252,0.9)",
                   }}
                 >
                   <option value="CAPEX">CAPEX</option>
                   <option value="OPEX">OPEX</option>
                 </select>
               </label>
-              <label style={{ fontSize: 12 }}>
+              <label style={{ fontSize: 12, display: "flex", flexDirection: "column", gap: 4 }}>
                 Amount (USD)
                 <input
                   type="number"
@@ -373,14 +557,16 @@ export default function TransactionsPage() {
                   }
                   style={{
                     width: "100%",
-                    marginTop: 4,
-                    padding: "6px 8px",
+                    padding: "8px 10px",
                     fontSize: 12,
+                    borderRadius: 999,
+                    border: "1px solid rgba(148,163,184,0.35)",
+                    background: "rgba(248,250,252,0.9)",
                   }}
                   required
                 />
               </label>
-              <label style={{ fontSize: 12 }}>
+              <label style={{ fontSize: 12, display: "flex", flexDirection: "column", gap: 4 }}>
                 Status
                 <select
                   value={form.status}
@@ -392,9 +578,11 @@ export default function TransactionsPage() {
                   }
                   style={{
                     width: "100%",
-                    marginTop: 4,
-                    padding: "6px 8px",
+                    padding: "8px 10px",
                     fontSize: 12,
+                    borderRadius: 999,
+                    border: "1px solid rgba(148,163,184,0.35)",
+                    background: "rgba(248,250,252,0.9)",
                   }}
                 >
                   <option value="BUDGETED">BUDGETED</option>
@@ -407,19 +595,17 @@ export default function TransactionsPage() {
                   display: "flex",
                   justifyContent: "flex-end",
                   gap: 8,
-                  marginTop: 6,
+                  marginTop: 10,
                 }}
               >
                 <button
                   type="button"
                   onClick={closeForm}
+                  className={styles.secondaryButton}
                   style={{
                     borderRadius: 999,
-                    border: "none",
-                    padding: "6px 12px",
                     fontSize: 12,
-                    cursor: "pointer",
-                    background: "#e5e7eb",
+                    padding: "6px 14px",
                   }}
                 >
                   Cancel
@@ -429,14 +615,16 @@ export default function TransactionsPage() {
                   style={{
                     borderRadius: 999,
                     border: "none",
-                    padding: "6px 12px",
+                    padding: "6px 16px",
                     fontSize: 12,
                     cursor: "pointer",
-                    background: "#0f172a",
+                    background:
+                      "linear-gradient(135deg, #020617, #111827)",
                     color: "#f9fafb",
+                    boxShadow: "0 14px 30px rgba(15,23,42,0.4)",
                   }}
                 >
-                  {mode === "create" ? "Create" : "Save changes"}
+                  {mode === "create" ? "Create transaction" : "Save changes"}
                 </button>
               </div>
             </form>
