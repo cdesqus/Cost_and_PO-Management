@@ -31,9 +31,7 @@ const navGroups: NavGroup[] = [
   {
     title: "Procurement & PO",
     items: [
-      { href: "/po/create", label: "Create Purchase Order", icon: "➕" },
-      { href: "/po/approvals", label: "Approval Center", icon: "✅" },
-      { href: "/po/tracking", label: "PO Tracking", icon: "📑" },
+      { href: "/po/tracking", label: "Purchase Orders", icon: "📑" },
     ],
   },
   {
