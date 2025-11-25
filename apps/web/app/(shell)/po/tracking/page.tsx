@@ -195,14 +195,15 @@ export default function PoTrackingPage() {
             style={{
               borderRadius: 999,
               border: "none",
-              padding: "6px 12px",
-              fontSize: 12,
+              padding: "8px 16px",
+              fontSize: 13,
               cursor: "pointer",
               background: "#0f172a",
               color: "#f9fafb",
+              fontWeight: 500,
             }}
           >
-            + New PO
+            Create Purchase Order
           </button>
         </div>
         <div style={{ overflowX: "auto" }}>
@@ -352,121 +353,167 @@ export default function PoTrackingPage() {
             </div>
             <form
               onSubmit={handleSubmit}
-              style={{ display: "flex", flexDirection: "column", gap: 10 }}
+              style={{ display: "flex", flexDirection: "column", gap: 14 }}
             >
-              <label style={{ fontSize: 12 }}>
-                PO Number
-                <input
-                  type="text"
-                  value={form.poNumber}
-                  onChange={(e) =>
-                    setForm((prev) => ({ ...prev, poNumber: e.target.value }))
-                  }
-                  style={{
-                    width: "100%",
-                    marginTop: 4,
-                    padding: "6px 8px",
-                    fontSize: 12,
-                  }}
-                  required
-                />
-              </label>
-              <label style={{ fontSize: 12 }}>
-                Vendor
-                <input
-                  type="text"
-                  value={form.vendorName}
-                  onChange={(e) =>
-                    setForm((prev) => ({ ...prev, vendorName: e.target.value }))
-                  }
-                  style={{
-                    width: "100%",
-                    marginTop: 4,
-                    padding: "6px 8px",
-                    fontSize: 12,
-                  }}
-                  required
-                />
-              </label>
-              <label style={{ fontSize: 12 }}>
-                Cost Group
-                <input
-                  type="text"
-                  value={form.costGroupName}
-                  onChange={(e) =>
-                    setForm((prev) => ({
-                      ...prev,
-                      costGroupName: e.target.value,
-                    }))
-                  }
-                  style={{
-                    width: "100%",
-                    marginTop: 4,
-                    padding: "6px 8px",
-                    fontSize: 12,
-                  }}
-                  required
-                />
-              </label>
-              <label style={{ fontSize: 12 }}>
-                Amount (USD)
-                <input
-                  type="number"
-                  min="0"
-                  value={form.amountUsd}
-                  onChange={(e) =>
-                    setForm((prev) => ({ ...prev, amountUsd: e.target.value }))
-                  }
-                  style={{
-                    width: "100%",
-                    marginTop: 4,
-                    padding: "6px 8px",
-                    fontSize: 12,
-                  }}
-                  required
-                />
-              </label>
-              <label style={{ fontSize: 12 }}>
-                Status
-                <select
-                  value={form.status}
-                  onChange={(e) =>
-                    setForm((prev) => ({
-                      ...prev,
-                      status: e.target.value as PoStatus,
-                    }))
-                  }
-                  style={{
-                    width: "100%",
-                    marginTop: 4,
-                    padding: "6px 8px",
-                    fontSize: 12,
-                  }}
-                >
-                  <option value="DRAFT">DRAFT</option>
-                  <option value="PENDING_APPROVAL">PENDING_APPROVAL</option>
-                  <option value="APPROVED">APPROVED</option>
-                  <option value="REJECTED">REJECTED</option>
-                  <option value="CANCELLED">CANCELLED</option>
-                </select>
-              </label>
-              <label style={{ fontSize: 12 }}>
-                Created Date
-                <input
-                  type="date"
-                  value={form.createdDate}
-                  onChange={(e) =>
-                    setForm((prev) => ({ ...prev, createdDate: e.target.value }))
-                  }
-                  style={{
-                    width: "100%",
-                    marginTop: 4,
-                    padding: "6px 8px",
-                    fontSize: 12,
-                  }}
-                  required
-                />
-              </label>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+                  gap: 10,
+                }}
+              >
+                <div>
+                  <h4
+                    style={{
+                      fontSize: 11,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.14em",
+                      marginBottom: 4,
+                      color: "rgba(15,23,42,0.6)",
+                    }}
+                  >
+                    PO Basics
+                  </h4>
+                  <label style={{ fontSize: 12 }}>
+                    PO Number
+                    <input
+                      type="text"
+                      value={form.poNumber}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          poNumber: e.target.value,
+                        }))
+                      }
+                      style={{
+                        width: "100%",
+                        marginTop: 4,
+                        padding: "6px 8px",
+                        fontSize: 12,
+                      }}
+                      required
+                    />
+                  </label>
+                  <label style={{ fontSize: 12, marginTop: 8 }}>
+                    Vendor
+                    <input
+                      type="text"
+                      value={form.vendorName}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          vendorName: e.target.value,
+                        }))
+                      }
+                      style={{
+                        width: "100%",
+                        marginTop: 4,
+                        padding: "6px 8px",
+                        fontSize: 12,
+                      }}
+                      required
+                    />
+                  </label>
+                  <label style={{ fontSize: 12, marginTop: 8 }}>
+                    Cost Group
+                    <input
+                      type="text"
+                      value={form.costGroupName}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          costGroupName: e.target.value,
+                        }))
+                      }
+                      style={{
+                        width: "100%",
+                        marginTop: 4,
+                        padding: "6px 8px",
+                        fontSize: 12,
+                      }}
+                      required
+                    />
+                  </label>
+                </div>
+                <div>
+                  <h4
+                    style={{
+                      fontSize: 11,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.14em",
+                      marginBottom: 4,
+                      color: "rgba(15,23,42,0.6)",
+                    }}
+                  >
+                    Financials &amp; Status
+                  </h4>
+                  <label style={{ fontSize: 12 }}>
+                    Amount (USD)
+                    <input
+                      type="number"
+                      min="0"
+                      value={form.amountUsd}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          amountUsd: e.target.value,
+                        }))
+                      }
+                      style={{
+                        width: "100%",
+                        marginTop: 4,
+                        padding: "6px 8px",
+                        fontSize: 12,
+                      }}
+                      required
+                    />
+                  </label>
+                  <label style={{ fontSize: 12, marginTop: 8 }}>
+                    Status
+                    <select
+                      value={form.status}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          status: e.target.value as PoStatus,
+                        }))
+                      }
+                      style={{
+                        width: "100%",
+                        marginTop: 4,
+                        padding: "6px 8px",
+                        fontSize: 12,
+                      }}
+                    >
+                      <option value="DRAFT">DRAFT</option>
+                      <option value="PENDING_APPROVAL">PENDING_APPROVAL</option>
+                      <option value="APPROVED">APPROVED</option>
+                      <option value="REJECTED">REJECTED</option>
+                      <option value="CANCELLED">CANCELLED</option>
+                    </select>
+                  </label>
+                  <label style={{ fontSize: 12, marginTop: 8 }}>
+                    Created Date
+                    <input
+                      type="date"
+                      value={form.createdDate}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          createdDate: e.target.value,
+                        }))
+                      }
+                      style={{
+                        width: "100%",
+                        marginTop: 4,
+                        padding: "6px 8px",
+                        fontSize: 12,
+                      }}
+                      required
+                    />
+                  </label>
+                </div>
+              </div>
               <div
                 style={{
                   display: "flex",
