@@ -89,22 +89,13 @@ export default function AllocationsPage() {
         </p>
       </header>
 
-      <div className={styles.sectionCard}>
-        <div className={styles.sectionHeader}>
-          <h3>New Allocation</h3>
-          <span className={styles.badge}>Create</span>
+      <div className={styles.scCard}>
+        <div className={styles.scHeaderRow}>
+          <span className={styles.scHeaderTitle}>New Allocation</span>
+          <span className={styles.scDemoBadge}>Create</span>
         </div>
-        <form
-          onSubmit={handleCreate}
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(4, minmax(0, 1fr)) auto",
-            gap: 8,
-            alignItems: "flex-end",
-            fontSize: 12,
-          }}
-        >
-          <label>
+        <form onSubmit={handleCreate} className={styles.scFormGrid}>
+          <label className={styles.scFormField}>
             Year
             <input
               type="number"
@@ -115,15 +106,10 @@ export default function AllocationsPage() {
                   year: Number(e.target.value) || prev.year,
                 }))
               }
-              style={{
-                width: "100%",
-                marginTop: 4,
-                padding: "6px 8px",
-                fontSize: 12,
-              }}
+              className={styles.scInput}
             />
           </label>
-          <label>
+          <label className={styles.scFormField}>
             Cost Group
             <input
               type="text"
@@ -131,102 +117,88 @@ export default function AllocationsPage() {
               onChange={(e) =>
                 setForm((prev) => ({ ...prev, costGroup: e.target.value }))
               }
-              style={{
-                width: "100%",
-                marginTop: 4,
-                padding: "6px 8px",
-                fontSize: 12,
-              }}
+              className={styles.scInput}
               required
             />
           </label>
-          <label>
+          <label className={styles.scFormField}>
             CAPEX Ceiling (USD)
             <input
               type="number"
               min="0"
               value={form.capexCeiling}
               onChange={(e) =>
-                setForm((prev) => ({ ...prev, capexCeiling: e.target.value }))
+                setForm((prev) => ({
+                  ...prev,
+                  capexCeiling: e.target.value,
+                }))
               }
-              style={{
-                width: "100%",
-                marginTop: 4,
-                padding: "6px 8px",
-                fontSize: 12,
-              }}
+              className={styles.scInput}
               required
             />
           </label>
-          <label>
+          <label className={styles.scFormField}>
             OPEX Ceiling (USD)
             <input
               type="number"
               min="0"
               value={form.opexCeiling}
               onChange={(e) =>
-                setForm((prev) => ({ ...prev, opexCeiling: e.target.value }))
+                setForm((prev) => ({
+                  ...prev,
+                  opexCeiling: e.target.value,
+                }))
               }
-              style={{
-                width: "100%",
-                marginTop: 4,
-                padding: "6px 8px",
-                fontSize: 12,
-              }}
+              className={styles.scInput}
               required
             />
           </label>
-          <button
-            type="submit"
-            style={{
-              borderRadius: 999,
-              border: "none",
-              padding: "8px 14px",
-              fontSize: 12,
-              cursor: "pointer",
-              background: "#0f172a",
-              color: "#f9fafb",
-              marginTop: 16,
-            }}
-          >
-            Add
+          <button type="submit" className={styles.scPrimaryButton}>
+            Add Allocation
           </button>
         </form>
       </div>
 
-      <div className={styles.sectionCard}>
-        <div className={styles.sectionHeader}>
-          <h3>Cost Group Allocations</h3>
-          <span className={styles.badge}>Read &amp; Update</span>
+      <div className={styles.scCard}>
+        <div className={styles.scHeaderRow}>
+          <span className={styles.scHeaderTitle}>Cost Group Allocations</span>
+          <div style={{ display: "flex", gap: 8 }}>
+            <button
+              type="button"
+              className={`${styles.scActionButton} ${styles.scActionBlue}`}
+            >
+              Read &amp; Update
+            </button>
+            <button
+              type="button"
+              className={`${styles.scActionButton} ${styles.scActionYellow}`}
+              onClick={() => {
+                const el = document.activeElement as HTMLElement | null;
+                if (el) {
+                  el.blur();
+                }
+              }}
+            >
+              + New Allocation
+            </button>
+          </div>
         </div>
-        <div style={{ overflowX: "auto" }}>
-          <table
-            style={{
-              width: "100%",
-              borderCollapse: "collapse",
-              fontSize: 12,
-            }}
-          >
+        <div className={styles.scTableWrapper}>
+          <table className={styles.scTable}>
             <thead>
               <tr>
-                <th style={{ textAlign: "left", padding: "8px 4px" }}>Year</th>
-                <th style={{ textAlign: "left", padding: "8px 4px" }}>
-                  Cost Group
-                </th>
-                <th style={{ textAlign: "right", padding: "8px 4px" }}>
-                  CAPEX Ceiling (USD)
-                </th>
-                <th style={{ textAlign: "right", padding: "8px 4px" }}>
-                  OPEX Ceiling (USD)
-                </th>
+                <th style={{ textAlign: "left" }}>Year</th>
+                <th style={{ textAlign: "left" }}>Cost Group</th>
+                <th style={{ textAlign: "right" }}>CAPEX Ceiling (USD)</th>
+                <th style={{ textAlign: "right" }}>OPEX Ceiling (USD)</th>
               </tr>
             </thead>
             <tbody>
               {rows.map((row) => (
-                <tr key={row.id}>
-                  <td style={{ padding: "6px 4px" }}>{row.year}</td>
-                  <td style={{ padding: "6px 4px" }}>{row.costGroup}</td>
-                  <td style={{ padding: "6px 4px", textAlign: "right" }}>
+                <tr key={row.id} className={styles.scTableRow}>
+                  <td>{row.year}</td>
+                  <td>{row.costGroup}</td>
+                  <td style={{ textAlign: "right" }}>
                     <input
                       type="number"
                       min="0"
@@ -238,15 +210,14 @@ export default function AllocationsPage() {
                           e.target.value,
                         )
                       }
+                      className={styles.scInput}
                       style={{
-                        width: "100%",
-                        padding: "4px 6px",
-                        fontSize: 12,
+                        maxWidth: 180,
                         textAlign: "right",
                       }}
                     />
                   </td>
-                  <td style={{ padding: "6px 4px", textAlign: "right" }}>
+                  <td style={{ textAlign: "right" }}>
                     <input
                       type="number"
                       min="0"
@@ -258,10 +229,9 @@ export default function AllocationsPage() {
                           e.target.value,
                         )
                       }
+                      className={styles.scInput}
                       style={{
-                        width: "100%",
-                        padding: "4px 6px",
-                        fontSize: 12,
+                        maxWidth: 180,
                         textAlign: "right",
                       }}
                     />
