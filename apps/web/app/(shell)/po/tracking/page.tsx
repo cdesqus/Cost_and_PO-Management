@@ -45,6 +45,7 @@ type FormMode = "create" | "edit";
 
 export default function PoTrackingPage() {
   const [rows, setRows] = useState<PoRow[]>(initialPos);
+  const [search, setSearch] = useState("");
   const [mode, setMode] = useState<FormMode>("create");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
@@ -64,6 +65,17 @@ export default function PoTrackingPage() {
       ),
     [rows],
   );
+
+  const filteredRows = useMemo(() => {
+    if (!search.trim()) return sortedRows;
+    const q = search.toLowerCase();
+    return sortedRows.filter(
+      (row) =>
+        row.poNumber.toLowerCase().includes(q) ||
+        row.vendorName.toLowerCase().includes(q) ||
+        row.costGroupName.toLowerCase().includes(q),
+    );
+  }, [sortedRows, search]);
 
   const openCreate = () => {
     setMode("create");
@@ -149,15 +161,34 @@ export default function PoTrackingPage() {
   return (
     <>
       <header className={styles.dashboardHeader}>
-        <h1>PO Tracking</h1>
+        <h1>Purchase Orders</h1>
         <p>
-          Track Purchase Orders, their current status, and related budget impact.
-          This view uses local demo data only.
+          Single view for all POs — draft, pending approval, and approved —
+          with inline status updates. This view uses local demo data only.
         </p>
       </header>
       <div className={styles.sectionCard}>
-        <div className={styles.sectionHeader}>
-          <h3>All Purchase Orders</h3>
+        <div
+          className={styles.sectionHeader}
+          style={{ alignItems: "center", gap: 8 }}
+        >
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <h3>All Purchase Orders</h3>
+            <input
+              type="text"
+              placeholder="Search by PO number, vendor, or cost group"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              style={{
+                width: "100%",
+                maxWidth: 260,
+                padding: "6px 8px",
+                fontSize: 12,
+                borderRadius: 999,
+                border: "1px solid rgba(15,23,42,0.12)",
+              }}
+            />
+          </div>
           <button
             type="button"
             onClick={openCreate}
@@ -206,7 +237,7 @@ export default function PoTrackingPage() {
               </tr>
             </thead>
             <tbody>
-              {sortedRows.map((row) => (
+              {filteredRows.map((row) => (
                 <tr key={row.id}>
                   <td style={{ padding: "6px 4px" }}>{row.poNumber}</td>
                   <td style={{ padding: "6px 4px" }}>{row.vendorName}</td>
