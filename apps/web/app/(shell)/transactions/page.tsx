@@ -39,6 +39,7 @@ const initialRows: TransactionRow[] = [
 
 export default function TransactionsPage() {
   const [rows, setRows] = useState<TransactionRow[]>(initialRows);
+  const [search, setSearch] = useState("");
   const [mode, setMode] = useState<FormMode>("create");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
@@ -55,6 +56,20 @@ export default function TransactionsPage() {
       [...rows].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0)),
     [rows],
   );
+
+  const filteredRows = useMemo(() => {
+    if (!search.trim()) return sortedRows;
+    const q = search.toLowerCase();
+    return sortedRows.filter((row) => {
+      const amountStr = String(row.amountUsd);
+      return (
+        row.projectVendor.toLowerCase().includes(q) ||
+        row.costType.toLowerCase().includes(q) ||
+        row.status.toLowerCase().includes(q) ||
+        amountStr.includes(q)
+      );
+    });
+  }, [sortedRows, search]);
 
   const openCreate = () => {
     setMode("create");
@@ -138,101 +153,72 @@ export default function TransactionsPage() {
         </p>
       </header>
 
-      <div className={styles.sectionCard}>
-        <div className={styles.sectionHeader}>
-          <h3>Transactions</h3>
-          <div style={{ display: "flex", gap: 8 }}>
+      <div className={styles.scCard}>
+        <div className={styles.allocToolbar}>
+          <span className={styles.scHeaderTitle}>Expense Transactions</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <div className={styles.allocSearchWrapper}>
+              <span className={styles.allocSearchIcon}>🔍</span>
+              <input
+                type="text"
+                placeholder="Search by project, vendor or status…"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className={styles.allocSearch}
+              />
+            </div>
             <button
               type="button"
+              className={styles.scPrimaryButton}
               onClick={openCreate}
-              style={{
-                borderRadius: 999,
-                border: "none",
-                padding: "6px 12px",
-                fontSize: 12,
-                cursor: "pointer",
-                background: "#0f172a",
-                color: "#f9fafb",
-              }}
             >
               + New Transaction
             </button>
           </div>
         </div>
 
-        <div style={{ overflowX: "auto" }}>
-          <table
-            style={{
-              width: "100%",
-              borderCollapse: "collapse",
-              fontSize: 12,
-            }}
-          >
+        <div className={styles.scTableWrapper}>
+          <table className={styles.scTable}>
             <thead>
               <tr>
-                <th style={{ textAlign: "left", padding: "8px 4px" }}>Date</th>
-                <th style={{ textAlign: "left", padding: "8px 4px" }}>
-                  Project / Vendor
-                </th>
-                <th style={{ textAlign: "left", padding: "8px 4px" }}>
-                  Cost Type
-                </th>
-                <th style={{ textAlign: "right", padding: "8px 4px" }}>
-                  Amount (USD)
-                </th>
-                <th style={{ textAlign: "left", padding: "8px 4px" }}>
-                  Status
-                </th>
-                <th style={{ textAlign: "right", padding: "8px 4px" }}>
-                  Actions
-                </th>
+                <th style={{ textAlign: "left" }}>Date</th>
+                <th style={{ textAlign: "left" }}>Project / Vendor</th>
+                <th style={{ textAlign: "left" }}>Cost Type</th>
+                <th style={{ textAlign: "right" }}>Amount (USD)</th>
+                <th style={{ textAlign: "left" }}>Status</th>
+                <th style={{ textAlign: "right" }}>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {sortedRows.map((row) => (
-                <tr key={row.id}>
-                  <td style={{ padding: "6px 4px" }}>{row.date}</td>
-                  <td style={{ padding: "6px 4px" }}>{row.projectVendor}</td>
-                  <td style={{ padding: "6px 4px" }}>{row.costType}</td>
-                  <td style={{ padding: "6px 4px", textAlign: "right" }}>
+              {filteredRows.map((row) => (
+                <tr key={row.id} className={styles.scTableRow}>
+                  <td>{row.date}</td>
+                  <td>{row.projectVendor}</td>
+                  <td>{row.costType}</td>
+                  <td style={{ textAlign: "right" }}>
                     {formatCurrency(row.amountUsd, "USD", "en-US")}
                   </td>
-                  <td style={{ padding: "6px 4px" }}>{row.status}</td>
-                  <td style={{ padding: "6px 4px", textAlign: "right" }}>
+                  <td>{row.status}</td>
+                  <td style={{ textAlign: "right" }}>
                     <button
                       type="button"
                       onClick={() => openEdit(row)}
-                      style={{
-                        borderRadius: 999,
-                        border: "none",
-                        padding: "4px 8px",
-                        fontSize: 11,
-                        cursor: "pointer",
-                        marginRight: 4,
-                        background: "#e5e7eb",
-                      }}
+                      className={`${styles.scActionButton} ${styles.scActionBlue}`}
+                      style={{ marginRight: 4 }}
                     >
                       Edit
                     </button>
                     <button
                       type="button"
                       onClick={() => handleDelete(row.id)}
-                      style={{
-                        borderRadius: 999,
-                        border: "none",
-                        padding: "4px 8px",
-                        fontSize: 11,
-                        cursor: "pointer",
-                        background: "#fee2e2",
-                        color: "#b91c1c",
-                      }}
+                      className={`${styles.scActionButton} ${styles.scActionDelete}`}
                     >
                       Delete
                     </button>
                   </td>
                 </tr>
               ))}
-              {sortedRows.length === 0 ? (
+              {filteredRows.length === 0 ? (
                 <tr>
                   <td
                     colSpan={6}
@@ -242,7 +228,7 @@ export default function TransactionsPage() {
                       color: "rgba(15,23,42,0.6)",
                     }}
                   >
-                    No transactions yet. Use “New Transaction” to create one.
+                    No transactions match this search.
                   </td>
                 </tr>
               ) : null}
