@@ -167,27 +167,13 @@ export default function PoTrackingPage() {
           with inline status updates. This view uses local demo data only.
         </p>
       </header>
-      <div className={styles.sectionCard}>
-        <div
-          className={styles.sectionHeader}
-          style={{ alignItems: "center", gap: 8 }}
-        >
-          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+      <div className={styles.poCard}>
+        <div className={styles.poHeaderRow}>
+          <div className={styles.poHeaderTitleGroup}>
             <h3>All Purchase Orders</h3>
-            <input
-              type="text"
-              placeholder="Search by PO number, vendor, or cost group"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              style={{
-                width: "100%",
-                maxWidth: 260,
-                padding: "6px 8px",
-                fontSize: 12,
-                borderRadius: 999,
-                border: "1px solid rgba(15,23,42,0.12)",
-              }}
-            />
+            <span className={styles.poHeaderSubtitle}>
+              View and manage draft, pending, and approved purchase orders in one place.
+            </span>
           </div>
           <button
             type="button"
@@ -206,87 +192,79 @@ export default function PoTrackingPage() {
             Create Purchase Order
           </button>
         </div>
+        <div className={styles.poSearchWrapper}>
+          <input
+            type="text"
+            placeholder="Search by PO number, vendor..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className={styles.poSearch}
+          />
+        </div>
         <div style={{ overflowX: "auto" }}>
-          <table
-            style={{
-              width: "100%",
-              borderCollapse: "collapse",
-              fontSize: 12,
-            }}
-          >
+          <table className={styles.poTable}>
             <thead>
               <tr>
-                <th style={{ textAlign: "left", padding: "8px 4px" }}>
-                  PO Number
-                </th>
-                <th style={{ textAlign: "left", padding: "8px 4px" }}>Vendor</th>
-                <th style={{ textAlign: "left", padding: "8px 4px" }}>
-                  Cost Group
-                </th>
-                <th style={{ textAlign: "right", padding: "8px 4px" }}>
-                  Amount (USD)
-                </th>
-                <th style={{ textAlign: "left", padding: "8px 4px" }}>
-                  Status
-                </th>
-                <th style={{ textAlign: "left", padding: "8px 4px" }}>
-                  Created
-                </th>
-                <th style={{ textAlign: "right", padding: "8px 4px" }}>
-                  Actions
-                </th>
+                <th style={{ textAlign: "left" }}>PO Number</th>
+                <th style={{ textAlign: "left" }}>Vendor</th>
+                <th style={{ textAlign: "left" }}>Cost Group</th>
+                <th style={{ textAlign: "right" }}>Amount (USD)</th>
+                <th style={{ textAlign: "left" }}>Status</th>
+                <th style={{ textAlign: "left" }}>Created</th>
+                <th style={{ textAlign: "right" }}>Actions</th>
               </tr>
             </thead>
             <tbody>
               {filteredRows.map((row) => (
-                <tr key={row.id}>
-                  <td style={{ padding: "6px 4px" }}>{row.poNumber}</td>
-                  <td style={{ padding: "6px 4px" }}>{row.vendorName}</td>
-                  <td style={{ padding: "6px 4px" }}>{row.costGroupName}</td>
-                  <td style={{ padding: "6px 4px", textAlign: "right" }}>
+                <tr key={row.id} className={styles.poTableRow}>
+                  <td>{row.poNumber}</td>
+                  <td>{row.vendorName}</td>
+                  <td>{row.costGroupName}</td>
+                  <td style={{ textAlign: "right" }}>
                     $
                     {row.amountUsd.toLocaleString("en-US", {
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2,
                     })}
                   </td>
-                  <td style={{ padding: "6px 4px" }}>{row.status}</td>
-                  <td style={{ padding: "6px 4px" }}>{row.createdDate}</td>
-                  <td style={{ padding: "6px 4px", textAlign: "right" }}>
+                  <td>
+                    <span
+                      className={`${styles.poStatusChip} ${
+                        row.status === "DRAFT"
+                          ? styles.poStatusDraft
+                          : row.status === "PENDING_APPROVAL"
+                          ? styles.poStatusPending
+                          : row.status === "APPROVED"
+                          ? styles.poStatusApproved
+                          : row.status === "REJECTED"
+                          ? styles.poStatusRejected
+                          : styles.poStatusCancelled
+                      }`}
+                    >
+                      {row.status}
+                    </span>
+                  </td>
+                  <td>{row.createdDate}</td>
+                  <td style={{ textAlign: "right" }}>
                     <button
                       type="button"
                       onClick={() => openEdit(row)}
-                      style={{
-                        borderRadius: 999,
-                        border: "none",
-                        padding: "4px 8px",
-                        fontSize: 11,
-                        cursor: "pointer",
-                        marginRight: 4,
-                        background: "#e5e7eb",
-                      }}
+                      className={`${styles.poActionButton} ${styles.poActionEdit}`}
+                      style={{ marginRight: 4 }}
                     >
-                      Edit
+                      ✏️ Edit
                     </button>
                     <button
                       type="button"
                       onClick={() => handleDelete(row.id)}
-                      style={{
-                        borderRadius: 999,
-                        border: "none",
-                        padding: "4px 8px",
-                        fontSize: 11,
-                        cursor: "pointer",
-                        background: "#fee2e2",
-                        color: "#b91c1c",
-                      }}
+                      className={`${styles.poActionButton} ${styles.poActionDelete}`}
                     >
-                      Delete
+                      🗑 Delete
                     </button>
                   </td>
                 </tr>
               ))}
-              {sortedRows.length === 0 ? (
+              {filteredRows.length === 0 ? (
                 <tr>
                   <td
                     colSpan={7}
@@ -296,7 +274,7 @@ export default function PoTrackingPage() {
                       color: "rgba(15,23,42,0.6)",
                     }}
                   >
-                    No purchase orders yet. Use “New PO” to create one.
+                    No purchase orders match this search.
                   </td>
                 </tr>
               ) : null}
