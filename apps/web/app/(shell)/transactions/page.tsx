@@ -49,11 +49,45 @@ export default function TransactionsPage() {
     amountUsd: "",
     status: "BUDGETED" as TransactionStatus,
   });
+  const [costTypeFilter, setCostTypeFilter] = useState<CostType | "ALL">("ALL");
+  const [statusFilter, setStatusFilter] = useState<TransactionStatus | "ALL">(
+    "ALL",
+  );
+
+  const metrics = useMemo(() => {
+    let capex = 0;
+    let opex = 0;
+    let openCommitments = 0;
+
+    rows.forEach((row) => {
+      if (row.costType === "CAPEX") capex += row.amountUsd;
+      if (row.costType === "OPEX") opex += row.amountUsd;
+      if (row.status !== "PAID") openCommitments += row.amountUsd;
+    });
+
+    return { capex, opex, openCommitments };
+  }, [rows]);
+
+  const filteredRows = useMemo(
+    () =>
+      rows.filter((row) => {
+        if (costTypeFilter !== "ALL" && row.costType !== costTypeFilter) {
+          return false;
+        }
+        if (statusFilter !== "ALL" && row.status !== statusFilter) {
+          return false;
+        }
+        return true;
+      }),
+    [rows, costTypeFilter, statusFilter],
+  );
 
   const sortedRows = useMemo(
     () =>
-      [...rows].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0)),
-    [rows],
+      [...filteredRows].sort((a, b) =>
+        a.date < b.date ? 1 : a.date > b.date ? -1 : 0,
+      ),
+    [filteredRows],
   );
 
   const openCreate = () => {
@@ -139,6 +173,41 @@ export default function TransactionsPage() {
         </p>
       </header>
 
+      <section className={styles.kpiGrid}>
+        <article className={styles.kpiCard}>
+          <h2>Capex booked</h2>
+          <div>
+            <span className={styles.kpiValue}>
+              {formatCurrency(metrics.capex, "USD", "en-US")}
+            </span>
+            <span className={styles.kpiSubtext}>this fiscal year</span>
+          </div>
+          <p className={styles.kpiMeta}>Hardware, infra and long-term assets.</p>
+        </article>
+        <article className={styles.kpiCard}>
+          <h2>Opex run-rate</h2>
+          <div>
+            <span className={styles.kpiValue}>
+              {formatCurrency(metrics.opex, "USD", "en-US")}
+            </span>
+            <span className={styles.kpiSubtext}>contracted spend</span>
+          </div>
+          <p className={styles.kpiMeta}>SaaS, licenses and managed services.</p>
+        </article>
+        <article className={styles.kpiCard}>
+          <h2>Open commitments</h2>
+          <div>
+            <span className={styles.kpiValue}>
+              {formatCurrency(metrics.openCommitments, "USD", "en-US")}
+            </span>
+            <span className={styles.kpiSubtext}>awaiting payment</span>
+          </div>
+          <p className={styles.kpiMeta}>
+            All lines with status other than PAID.
+          </p>
+        </article>
+      </section>
+
       <div className={styles.sectionCard}>
         <div className={styles.sectionHeader}>
           <div>
@@ -154,27 +223,123 @@ export default function TransactionsPage() {
               payments.
             </p>
           </div>
-          <button
-            type="button"
-            onClick={openCreate}
+          <div
             style={{
-              borderRadius: 999,
-              border: "none",
-              padding: "8px 18px",
-              fontSize: 12,
-              cursor: "pointer",
-              background:
-                "linear-gradient(135deg, #020617, #1e293b)", // dark navy gradient
-              color: "#f9fafb",
-              boxShadow: "0 14px 30px rgba(15, 23, 42, 0.4)",
-              display: "inline-flex",
+              display: "flex",
               alignItems: "center",
-              gap: 8,
-              whiteSpace: "nowrap",
+              gap: 12,
+              flexWrap: "wrap",
+              justifyContent: "flex-end",
             }}
           >
-            <span>+ New Transaction</span>
-          </button>
+            <div
+              style={{
+                display: "flex",
+                gap: 6,
+                padding: 4,
+                borderRadius: 999,
+                background: "rgba(248,250,252,0.9)",
+                border: "1px solid rgba(148,163,184,0.35)",
+              }}
+            >
+              {(["ALL", "CAPEX", "OPEX"] as const).map((value) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() =>
+                    setCostTypeFilter(value === "ALL" ? "ALL" : value)
+                  }
+                  style={{
+                    borderRadius: 999,
+                    border: "none",
+                    padding: "4px 10px",
+                    fontSize: 11,
+                    cursor: "pointer",
+                    background:
+                      costTypeFilter === value
+                        ? "rgba(51,92,255,0.12)"
+                        : "transparent",
+                    color:
+                      costTypeFilter === value
+                        ? "#1d4ed8"
+                        : "rgba(15,23,42,0.65)",
+                    boxShadow:
+                      costTypeFilter === value
+                        ? "0 6px 18px rgba(51,92,255,0.25)"
+                        : "none",
+                  }}
+                >
+                  {value === "ALL" ? "All types" : value}
+                </button>
+              ))}
+            </div>
+            <div
+              style={{
+                display: "flex",
+                gap: 6,
+                padding: 4,
+                borderRadius: 999,
+                background: "rgba(248,250,252,0.9)",
+                border: "1px solid rgba(148,163,184,0.35)",
+              }}
+            >
+              {(["ALL", "BUDGETED", "COMMITTED", "PAID"] as const).map(
+                (value) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() =>
+                      setStatusFilter(
+                        value === "ALL" ? "ALL" : (value as TransactionStatus),
+                      )
+                    }
+                    style={{
+                      borderRadius: 999,
+                      border: "none",
+                      padding: "4px 10px",
+                      fontSize: 11,
+                      cursor: "pointer",
+                      background:
+                        statusFilter === value
+                          ? "rgba(15,23,42,0.08)"
+                          : "transparent",
+                      color:
+                        statusFilter === value
+                          ? "#0f172a"
+                          : "rgba(15,23,42,0.65)",
+                      boxShadow:
+                        statusFilter === value
+                          ? "0 6px 18px rgba(15,23,42,0.25)"
+                          : "none",
+                    }}
+                  >
+                    {value === "ALL" ? "All status" : value}
+                  </button>
+                ),
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={openCreate}
+              style={{
+                borderRadius: 999,
+                border: "none",
+                padding: "8px 18px",
+                fontSize: 12,
+                cursor: "pointer",
+                background:
+                  "linear-gradient(135deg, #020617, #1e293b)", // dark navy gradient
+                color: "#f9fafb",
+                boxShadow: "0 14px 30px rgba(15, 23, 42, 0.4)",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                whiteSpace: "nowrap",
+              }}
+            >
+              <span>+ New Transaction</span>
+            </button>
+          </div>
         </div>
 
         <div
