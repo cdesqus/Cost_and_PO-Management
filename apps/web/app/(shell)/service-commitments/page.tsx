@@ -181,45 +181,22 @@ export default function ServiceCommitmentsPage() {
         </p>
       </header>
 
-      <div
-        style={{
-          display: "inline-flex",
-          borderRadius: 999,
-          border: "1px solid rgba(15,23,42,0.08)",
-          padding: 2,
-          marginBottom: 12,
-          background: "rgba(255,255,255,0.9)",
-        }}
-      >
+      <div className={styles.scTabBar}>
         <button
           type="button"
           onClick={() => setActiveTab("commitments")}
-          style={{
-            border: "none",
-            borderRadius: 999,
-            padding: "6px 12px",
-            fontSize: 12,
-            cursor: "pointer",
-            background:
-              activeTab === "commitments" ? "#0f172a" : "transparent",
-            color: activeTab === "commitments" ? "#f9fafb" : "#0f172a",
-          }}
+          className={`${styles.scTab} ${
+            activeTab === "commitments" ? styles.scTabActive : ""
+          }`}
         >
           Commitments
         </button>
         <button
           type="button"
           onClick={() => setActiveTab("renewals")}
-          style={{
-            border: "none",
-            borderRadius: 999,
-            padding: "6px 12px",
-            fontSize: 12,
-            cursor: "pointer",
-            background:
-              activeTab === "renewals" ? "#0f172a" : "transparent",
-            color: activeTab === "renewals" ? "#f9fafb" : "#0f172a",
-          }}
+          className={`${styles.scTab} ${
+            activeTab === "renewals" ? styles.scTabActive : ""
+          }`}
         >
           Renewal Tracker
         </button>
@@ -227,22 +204,13 @@ export default function ServiceCommitmentsPage() {
 
       {activeTab === "commitments" ? (
         <>
-          <div className={styles.sectionCard}>
-            <div className={styles.sectionHeader}>
-              <h3>New Commitment</h3>
-              <span className={styles.badge}>Demo</span>
+          <div className={styles.scCard}>
+            <div className={styles.scHeaderRow}>
+              <span className={styles.scHeaderTitle}>New Commitment</span>
+              <span className={styles.scDemoBadge}>Demo</span>
             </div>
-            <form
-              onSubmit={handleAdd}
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
-                gap: 8,
-                fontSize: 12,
-                alignItems: "flex-end",
-              }}
-            >
-              <label>
+            <form onSubmit={handleAdd} className={styles.scFormGrid}>
+              <label className={styles.scFormField}>
                 Name
                 <input
                   type="text"
@@ -250,16 +218,11 @@ export default function ServiceCommitmentsPage() {
                   onChange={(e) =>
                     setForm((prev) => ({ ...prev, name: e.target.value }))
                   }
-                  style={{
-                    width: "100%",
-                    marginTop: 4,
-                    padding: "6px 8px",
-                    fontSize: 12,
-                  }}
+                  className={styles.scInput}
                   required
                 />
               </label>
-              <label>
+              <label className={styles.scFormField}>
                 Type
                 <select
                   value={form.type}
@@ -269,19 +232,14 @@ export default function ServiceCommitmentsPage() {
                       type: e.target.value as CommitmentType,
                     }))
                   }
-                  style={{
-                    width: "100%",
-                    marginTop: 4,
-                    padding: "6px 8px",
-                    fontSize: 12,
-                  }}
+                  className={styles.scSelect}
                 >
                   <option value="LICENSE">LICENSE</option>
                   <option value="MANAGED_SERVICE">MANAGED_SERVICE</option>
                   <option value="MAINTENANCE">MAINTENANCE</option>
                 </select>
               </label>
-              <label>
+              <label className={styles.scFormField}>
                 Vendor
                 <input
                   type="text"
@@ -292,16 +250,11 @@ export default function ServiceCommitmentsPage() {
                       vendorName: e.target.value,
                     }))
                   }
-                  style={{
-                    width: "100%",
-                    marginTop: 4,
-                    padding: "6px 8px",
-                    fontSize: 12,
-                  }}
+                  className={styles.scInput}
                   required
                 />
               </label>
-              <label>
+              <label className={styles.scFormField}>
                 Cost Group
                 <input
                   type="text"
@@ -312,16 +265,11 @@ export default function ServiceCommitmentsPage() {
                       costGroupName: e.target.value,
                     }))
                   }
-                  style={{
-                    width: "100%",
-                    marginTop: 4,
-                    padding: "6px 8px",
-                    fontSize: 12,
-                  }}
+                  className={styles.scInput}
                   required
                 />
               </label>
-              <label>
+              <label className={styles.scFormField}>
                 Billing
                 <select
                   value={form.billingFrequency}
@@ -331,12 +279,7 @@ export default function ServiceCommitmentsPage() {
                       billingFrequency: e.target.value,
                     }))
                   }
-                  style={{
-                    width: "100%",
-                    marginTop: 4,
-                    padding: "6px 8px",
-                    fontSize: 12,
-                  }}
+                  className={styles.scSelect}
                 >
                   <option value="Monthly">Monthly</option>
                   <option value="Quarterly">Quarterly</option>
@@ -344,7 +287,7 @@ export default function ServiceCommitmentsPage() {
                   <option value="Biennial">Biennial</option>
                 </select>
               </label>
-              <label>
+              <label className={styles.scFormField}>
                 Next Renewal
                 <input
                   type="date"
@@ -355,16 +298,11 @@ export default function ServiceCommitmentsPage() {
                       nextRenewalDate: e.target.value,
                     }))
                   }
-                  style={{
-                    width: "100%",
-                    marginTop: 4,
-                    padding: "6px 8px",
-                    fontSize: 12,
-                  }}
+                  className={styles.scInput}
                   required
                 />
               </label>
-              <label>
+              <label className={styles.scFormField}>
                 Last PO Number
                 <input
                   type="text"
@@ -375,15 +313,10 @@ export default function ServiceCommitmentsPage() {
                       lastPoNumber: e.target.value,
                     }))
                   }
-                  style={{
-                    width: "100%",
-                    marginTop: 4,
-                    padding: "6px 8px",
-                    fontSize: 12,
-                  }}
+                  className={styles.scInput}
                 />
               </label>
-              <label>
+              <label className={styles.scFormField}>
                 Last PO Amount (USD)
                 <input
                   type="number"
@@ -395,16 +328,11 @@ export default function ServiceCommitmentsPage() {
                       lastPoAmountUsd: e.target.value,
                     }))
                   }
-                  style={{
-                    width: "100%",
-                    marginTop: 4,
-                    padding: "6px 8px",
-                    fontSize: 12,
-                  }}
+                  className={styles.scInput}
                   required
                 />
               </label>
-              <label>
+              <label className={styles.scFormField}>
                 Service Period
                 <input
                   type="text"
@@ -415,147 +343,79 @@ export default function ServiceCommitmentsPage() {
                       servicePeriodLabel: e.target.value,
                     }))
                   }
-                  style={{
-                    width: "100%",
-                    marginTop: 4,
-                    padding: "6px 8px",
-                    fontSize: 12,
-                  }}
-                  placeholder="e.g. Jan 2025 – Dec 2025"
+                  className={styles.scInput}
+                  placeholder="Jan 2025 – Dec 2025"
                 />
               </label>
-              {form.type === "LICENSE" ? (
-                <label>
-                  Asset Number / License Key
-                  <input
-                    type="text"
-                    value={form.assetNumber}
-                    onChange={(e) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        assetNumber: e.target.value,
-                      }))
-                    }
-                    style={{
-                      width: "100%",
-                      marginTop: 4,
-                      padding: "6px 8px",
-                      fontSize: 12,
-                    }}
-                    required
-                  />
-                </label>
-              ) : (
-                <div />
-              )}
-              <button
-                type="submit"
-                style={{
-                  borderRadius: 999,
-                  border: "none",
-                  padding: "8px 14px",
-                  fontSize: 12,
-                  cursor: "pointer",
-                  background: "#0f172a",
-                  color: "#f9fafb",
-                  marginTop: 16,
-                }}
-              >
+              <label className={styles.scFormField}>
+                Asset Number / License Key
+                <input
+                  type="text"
+                  value={form.assetNumber}
+                  onChange={(e) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      assetNumber: e.target.value,
+                    }))
+                  }
+                  className={styles.scInput}
+                  required={form.type === "LICENSE"}
+                />
+              </label>
+              <button type="submit" className={styles.scPrimaryButton}>
                 Add
               </button>
             </form>
           </div>
 
-          <div className={styles.sectionCard}>
-            <div className={styles.sectionHeader}>
-              <h3>Active Commitments</h3>
-              <span className={styles.badge}>Demo data</span>
+          <div className={styles.scCard}>
+            <div className={styles.scHeaderRow}>
+              <span className={styles.scHeaderTitle}>Active Commitments</span>
+              <span className={styles.scDemoBadge}>Demo data</span>
             </div>
-            <div style={{ overflowX: "auto" }}>
-              <table
-                style={{
-                  width: "100%",
-                  borderCollapse: "collapse",
-                  fontSize: 12,
-                }}
-              >
+            <div className={styles.scTableWrapper}>
+              <table className={styles.scTable}>
                 <thead>
                   <tr>
-                    <th style={{ textAlign: "left", padding: "8px 4px" }}>
-                      Commitment
-                    </th>
-                    <th style={{ textAlign: "left", padding: "8px 4px" }}>
-                      Type
-                    </th>
-                    <th style={{ textAlign: "left", padding: "8px 4px" }}>
-                      Vendor
-                    </th>
-                    <th style={{ textAlign: "left", padding: "8px 4px" }}>
-                      Cost Group
-                    </th>
-                    <th style={{ textAlign: "left", padding: "8px 4px" }}>
-                      Billing
-                    </th>
-                    <th style={{ textAlign: "left", padding: "8px 4px" }}>
-                      Next Renewal
-                    </th>
-                    <th style={{ textAlign: "left", padding: "8px 4px" }}>
-                      Last PO
-                    </th>
-                    <th style={{ textAlign: "right", padding: "8px 4px" }}>
-                      Last PO Amount (USD)
-                    </th>
-                    <th style={{ textAlign: "left", padding: "8px 4px" }}>
-                      Service Period
-                    </th>
-                    <th style={{ textAlign: "left", padding: "8px 4px" }}>
-                      Asset No. (License)
-                    </th>
-                    <th style={{ textAlign: "right", padding: "8px 4px" }}>
-                      Actions
-                    </th>
+                    <th style={{ textAlign: "left" }}>Commitment</th>
+                    <th style={{ textAlign: "left" }}>Type</th>
+                    <th style={{ textAlign: "left" }}>Vendor</th>
+                    <th style={{ textAlign: "left" }}>Cost Group</th>
+                    <th style={{ textAlign: "left" }}>Billing</th>
+                    <th style={{ textAlign: "left" }}>Next Renewal</th>
+                    <th style={{ textAlign: "left" }}>Last PO</th>
+                    <th style={{ textAlign: "right" }}>Last PO Amount (USD)</th>
+                    <th style={{ textAlign: "left" }}>Service Period</th>
+                    <th style={{ textAlign: "left" }}>Asset No.</th>
+                    <th style={{ textAlign: "right" }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {commitments.map((c) => (
-                    <tr key={c.id}>
-                      <td style={{ padding: "6px 4px" }}>{c.name}</td>
-                      <td style={{ padding: "6px 4px" }}>
-                        {getTypeLabel(c.type)}
-                      </td>
-                      <td style={{ padding: "6px 4px" }}>{c.vendorName}</td>
-                      <td style={{ padding: "6px 4px" }}>{c.costGroupName}</td>
-                      <td style={{ padding: "6px 4px" }}>
-                        {c.billingFrequency}
-                      </td>
-                      <td style={{ padding: "6px 4px" }}>{c.nextRenewalDate}</td>
-                      <td style={{ padding: "6px 4px" }}>{c.lastPoNumber}</td>
-                      <td style={{ padding: "6px 4px", textAlign: "right" }}>
+                    <tr key={c.id} className={styles.scTableRow}>
+                      <td>{c.name}</td>
+                      <td>{getTypeLabel(c.type)}</td>
+                      <td>{c.vendorName}</td>
+                      <td>{c.costGroupName}</td>
+                      <td>{c.billingFrequency}</td>
+                      <td>{c.nextRenewalDate}</td>
+                      <td>{c.lastPoNumber}</td>
+                      <td style={{ textAlign: "right" }}>
                         $
                         {c.lastPoAmountUsd.toLocaleString("en-US", {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2,
                         })}
                       </td>
-                      <td style={{ padding: "6px 4px" }}>
-                        {c.servicePeriodLabel}
-                      </td>
-                      <td style={{ padding: "6px 4px" }}>
+                      <td>{c.servicePeriodLabel}</td>
+                      <td>
                         {c.type === "LICENSE" ? c.assetNumber ?? "-" : "-"}
                       </td>
-                      <td style={{ padding: "6px 4px", textAlign: "right" }}>
+                      <td style={{ textAlign: "right" }}>
                         <button
                           type="button"
                           onClick={() => handleDelete(c.id)}
-                          style={{
-                            borderRadius: 999,
-                            border: "none",
-                            padding: "4px 8px",
-                            fontSize: 11,
-                            cursor: "pointer",
-                            background: "#fee2e2",
-                            color: "#b91c1c",
-                          }}
+                          className={`${styles.scActionButton} ${styles.scActionDelete}`}
                         >
                           Delete
                         </button>
@@ -582,118 +442,80 @@ export default function ServiceCommitmentsPage() {
           </div>
         </>
       ) : (
-        <div className={styles.sectionCard}>
-          <div className={styles.sectionHeader}>
-            <h3>Renewal Tracker</h3>
-            <span className={styles.badge}>Demo</span>
+        <div className={styles.scCard}>
+          <div className={styles.scHeaderRow}>
+            <span className={styles.scHeaderTitle}>Renewal Tracker</span>
+            <span className={styles.scDemoBadge}>Demo</span>
           </div>
-          <div style={{ overflowX: "auto" }}>
-            <table
-              style={{
-                width: "100%",
-                borderCollapse: "collapse",
-                fontSize: 12,
-              }}
-            >
+          <div className={styles.scTableWrapper}>
+            <table className={styles.scTable}>
               <thead>
                 <tr>
-                  <th style={{ textAlign: "left", padding: "8px 4px" }}>
-                    Commitment
-                  </th>
-                  <th style={{ textAlign: "left", padding: "8px 4px" }}>
-                    Type
-                  </th>
-                  <th style={{ textAlign: "left", padding: "8px 4px" }}>
-                    Vendor
-                  </th>
-                  <th style={{ textAlign: "left", padding: "8px 4px" }}>
-                    Cost Group
-                  </th>
-                  <th style={{ textAlign: "left", padding: "8px 4px" }}>
-                    Billing
-                  </th>
-                  <th style={{ textAlign: "left", padding: "8px 4px" }}>
-                    Next Renewal
-                  </th>
-                  <th style={{ textAlign: "right", padding: "8px 4px" }}>
-                    Est. Amount (USD)
-                  </th>
-                  <th style={{ textAlign: "left", padding: "8px 4px" }}>
-                    Status
-                  </th>
-                  <th style={{ textAlign: "right", padding: "8px 4px" }}>
-                    Actions
-                  </th>
+                  <th style={{ textAlign: "left" }}>Commitment</th>
+                  <th style={{ textAlign: "left" }}>Type</th>
+                  <th style={{ textAlign: "left" }}>Vendor</th>
+                  <th style={{ textAlign: "left" }}>Cost Group</th>
+                  <th style={{ textAlign: "left" }}>Billing</th>
+                  <th style={{ textAlign: "left" }}>Next Renewal</th>
+                  <th style={{ textAlign: "right" }}>Est. Amount (USD)</th>
+                  <th style={{ textAlign: "left" }}>Status</th>
+                  <th style={{ textAlign: "right" }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {upcomingRenewals.map((c) => (
-                  <tr key={c.id}>
-                    <td style={{ padding: "6px 4px" }}>{c.name}</td>
-                    <td style={{ padding: "6px 4px" }}>
-                      {getTypeLabel(c.type)}
-                    </td>
-                    <td style={{ padding: "6px 4px" }}>{c.vendorName}</td>
-                    <td style={{ padding: "6px 4px" }}>{c.costGroupName}</td>
-                    <td style={{ padding: "6px 4px" }}>
-                      {c.billingFrequency}
-                    </td>
-                    <td style={{ padding: "6px 4px" }}>
-                      {c.nextRenewalDate}
-                    </td>
-                    <td style={{ padding: "6px 4px", textAlign: "right" }}>
+                  <tr key={c.id} className={styles.scTableRow}>
+                    <td>{c.name}</td>
+                    <td>{getTypeLabel(c.type)}</td>
+                    <td>{c.vendorName}</td>
+                    <td>{c.costGroupName}</td>
+                    <td>{c.billingFrequency}</td>
+                    <td>{c.nextRenewalDate}</td>
+                    <td style={{ textAlign: "right" }}>
                       $
                       {c.lastPoAmountUsd.toLocaleString("en-US", {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
                       })}
                     </td>
-                    <td style={{ padding: "6px 4px" }}>{c.renewalStatus}</td>
-                    <td style={{ padding: "6px 4px", textAlign: "right" }}>
+                    <td>
+                      <span
+                        className={`${styles.scStatusChip} ${
+                          c.renewalStatus === "PLANNED"
+                            ? styles.scStatusPlanned
+                            : c.renewalStatus === "SCHEDULED"
+                            ? styles.scStatusScheduled
+                            : styles.scStatusRenewed
+                        }`}
+                      >
+                        {c.renewalStatus}
+                      </span>
+                    </td>
+                    <td style={{ textAlign: "right" }}>
                       <button
                         type="button"
-                        onClick={() => updateRenewalStatus(c.id, "SCHEDULED")}
-                        style={{
-                          borderRadius: 999,
-                          border: "none",
-                          padding: "4px 8px",
-                          fontSize: 11,
-                          cursor: "pointer",
-                          marginRight: 4,
-                          background: "#e0f2fe",
-                          color: "#0369a1",
-                        }}
+                        onClick={() =>
+                          updateRenewalStatus(c.id, "SCHEDULED")
+                        }
+                        className={`${styles.scActionButton} ${styles.scActionBlue}`}
+                        style={{ marginRight: 4 }}
                       >
                         Mark scheduled
                       </button>
                       <button
                         type="button"
-                        onClick={() => updateRenewalStatus(c.id, "RENEWED")}
-                        style={{
-                          borderRadius: 999,
-                          border: "none",
-                          padding: "4px 8px",
-                          fontSize: 11,
-                          cursor: "pointer",
-                          marginRight: 4,
-                          background: "#dcfce7",
-                          color: "#166534",
-                        }}
+                        onClick={() =>
+                          updateRenewalStatus(c.id, "RENEWED")
+                        }
+                        className={`${styles.scActionButton} ${styles.scActionGreen}`}
+                        style={{ marginRight: 4 }}
                       >
                         Mark renewed
                       </button>
                       <button
                         type="button"
                         onClick={() => postponeOneYear(c.id)}
-                        style={{
-                          borderRadius: 999,
-                          border: "none",
-                          padding: "4px 8px",
-                          fontSize: 11,
-                          cursor: "pointer",
-                          background: "#fef9c3",
-                          color: "#854d0e",
-                        }}
+                        className={`${styles.scActionButton} ${styles.scActionYellow}`}
                       >
                         Postpone 1 year
                       </button>

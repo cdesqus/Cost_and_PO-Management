@@ -498,6 +498,201 @@ button.secondary {
   gap: 12px;
 }
 
+/* Service Commitments */
+
+.scTabBar {
+  display: inline-flex;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  padding: 2px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.05);
+  margin-bottom: 12px;
+  gap: 2px;
+}
+
+.scTab {
+  border: none;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 12px;
+  cursor: pointer;
+  background: transparent;
+  color: #0f172a;
+}
+
+.scTabActive {
+  background: #0f172a;
+  color: #f9fafb;
+}
+
+.scCard {
+  border-radius: 24px;
+  border: 1px solid rgba(148, 163, 184, 0.32);
+  padding: 18px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: radial-gradient(circle at top left, #f9fafb 0, #eff6ff 46%, #eef2ff 100%);
+  box-shadow:
+    0 18px 40px rgba(15, 23, 42, 0.08),
+    0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.scHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.scHeaderTitle {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.scDemoBadge {
+  font-size: 11px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.16);
+  color: rgba(var(--gray-rgb), 0.7);
+}
+
+.scFormGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  font-size: 12px;
+  align-items: flex-end;
+}
+
+.scFormField {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.scInput,
+.scSelect {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+}
+
+.scInput:focus,
+.scSelect:focus {
+  outline: none;
+  border-color: rgba(59, 130, 246, 0.85);
+  box-shadow:
+    0 0 0 1px rgba(59, 130, 246, 0.4),
+    0 14px 32px rgba(59, 130, 246, 0.2);
+}
+
+.scPrimaryButton {
+  border-radius: 999px;
+  border: none;
+  padding: 10px 18px;
+  font-size: 13px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #0f172a, #1d4ed8);
+  color: #f9fafb;
+  font-weight: 500;
+  justify-self: flex-start;
+}
+
+.scTableWrapper {
+  overflow-x: auto;
+}
+
+.scTable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 6px;
+  font-size: 12px;
+}
+
+.scTable thead tr th {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(var(--gray-rgb), 0.6);
+  padding: 6px 6px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.scTableRow td {
+  background: rgba(255, 255, 255, 0.94);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+  padding: 9px 6px;
+}
+
+.scTableRow:hover td {
+  background: #f9fafb;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+}
+
+.scStatusChip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.scStatusPlanned {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.scStatusScheduled {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.scStatusRenewed {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.scActionButton {
+  border-radius: 999px;
+  border: none;
+  padding: 4px 9px;
+  font-size: 11px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.scActionBlue {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.scActionGreen {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.scActionYellow {
+  background: #fef9c3;
+  color: #854d0e;
+}
+
+.scActionDelete {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
 .poCard {
   border-radius: 24px;
   border: 1px solid rgba(148, 163, 184, 0.3);
